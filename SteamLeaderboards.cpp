@@ -44,11 +44,16 @@
 
 SteamLeaderboard *SteamLeaderboards = NULL;
 extern IAGSEngine *engine;
+extern int const Steam_Initialized();
 
 SteamLeaderboard::SteamLeaderboard() : CurrentLeaderboard(NULL), LeaderboardEntriesCount(0),
                                          CallResultFindLeaderboard(), CallResultUploadScore(),
                                          CallResultDownloadScore()
 {
+  for (int i = 0; i < 10; ++i)
+  {
+    LeaderboardEntries[i].m_steamIDUser.Clear();
+  }
 }
 
 SteamLeaderboard::~SteamLeaderboard()
@@ -57,6 +62,7 @@ SteamLeaderboard::~SteamLeaderboard()
 
 void SteamLeaderboard::FindLeaderboard(char const *leaderboardName)
 {
+  if (leaderboardName == NULL) return;
   CurrentLeaderboard = NULL;
   CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), this, &SteamLeaderboard::OnFindLeaderboard);
 }
@@ -75,7 +81,7 @@ void SteamLeaderboard::OnFindLeaderboard(LeaderboardFindResult_t *callback, bool
 bool SteamLeaderboard::UploadScore(int score)
 {
   if (CurrentLeaderboard == NULL) return false;
-  CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(CurrentLeaderboard, k_ELeaderboardUploadScoreMethodKeepBest, score, NULL, 0), this, &SteamLeaderboard::OnUploadScore);
+  CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(CurrentLeaderboard, k_ELeaderboardUploadScoreMethodKeepBest, static_cast<int32>(score), NULL, 0), this, &SteamLeaderboard::OnUploadScore);
   return true;
 }
 
@@ -98,26 +104,32 @@ void SteamLeaderboard::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, 
 {
   if (IOFailure) return;
   LeaderboardEntriesCount = min(callback->m_cEntryCount, 10);
-  for (int i = 0; i < LeaderboardEntriesCount; ++i)
+  int i = 0;
+  for ( ; i < LeaderboardEntriesCount; ++i)
   {
     SteamUserStats()->GetDownloadedLeaderboardEntry(callback->m_hSteamLeaderboardEntries, i, &LeaderboardEntries[i], NULL, 0);
+  }
+  for ( ; i < 10; ++i)
+  {
+    LeaderboardEntries[i].m_steamIDUser.Clear();
   }
 }
 
 char const* SteamLeaderboard::GetCurrentLeaderboardName()
 {
+  if ((!Steam_Initialized()) || (CurrentLeaderboard == NULL)) return "";
   return SteamUserStats()->GetLeaderboardName(CurrentLeaderboard);
 }
 
 char const* SteamLeaderboard::GetLeaderName(int index)
 {
-  if ((index < 0) || (index > LeaderboardEntriesCount)) return NULL;
+  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return "";
   return SteamFriends()->GetFriendPersonaName(LeaderboardEntries[index].m_steamIDUser);
 }
 
 int SteamLeaderboard::GetLeaderScore(int index)
 {
-  if ((index < 0) || (index > LeaderboardEntriesCount)) return 0;
+  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return 0;
   return static_cast<int>(LeaderboardEntries[index].m_nScore);
 }
 
@@ -152,7 +164,8 @@ int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType type)
 
 char const* SteamLeaderboard_GetCurrentLeadboardName()
 {
-  return engine->CreateScriptString(SteamLeaderboards->GetCurrentLeaderboardName());
+  char const *leaderboardName = SteamLeaderboards->GetCurrentLeaderboardName();
+  return engine->CreateScriptString(leaderboardName == NULL ? "" : leaderboardName);
 }
 
 void SteamLeaderboard_FindLeaderboard(char const *leaderboardName)
@@ -172,7 +185,8 @@ int SteamLeaderboard_DownloadScores(int rawType)
 
 char const* SteamLeaderboard_GetLeaderName(int index)
 {
-  return engine->CreateScriptString(SteamLeaderboards->GetLeaderName(index));
+  char const *leaderName = SteamLeaderboards->GetLeaderName(index);
+  return engine->CreateScriptString(leaderName == NULL ? "" : leaderName);
 }
 
 int SteamLeaderboard_GetLeaderScore(int index)

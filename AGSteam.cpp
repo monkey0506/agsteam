@@ -195,7 +195,6 @@ int const Steam_Initialized()
     // helper method for the plugin to ensure that the call to Steam is placed before any other Steam functions
     // this function also serves for the AGS property
     static bool steamInitialized = false;
-    static bool donePluginInit = false;
     if (!steamInitialized)
     {
       steamInitialized = SteamAPI_Init();
@@ -219,12 +218,15 @@ IAGSEngine *engine;
 
 char const* Steam_GetCurrentGameLanguage()
 {
-  return engine->CreateScriptString(SteamApps()->GetCurrentGameLanguage());
+  if (!Steam_Initialized()) return engine->CreateScriptString("");
+  char const *language = SteamApps()->GetCurrentGameLanguage();
+  return engine->CreateScriptString(language == NULL ? "" : language);
 }
 
 char const* Steam_GetUserName()
 {
-  return engine->CreateScriptString(SteamFriends()->GetPersonaName());
+  if (!Steam_Initialized()) return engine->CreateScriptString("");
+  return engine->CreateScriptString(SteamFriends()->GetPersonaName()); // GUARANTEED to not be NULL
 }
 
 void AGS_EngineStartup(IAGSEngine *lpEngine)
