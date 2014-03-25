@@ -117,13 +117,13 @@ void SteamLeaderboard::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, 
 
 char const* SteamLeaderboard::GetCurrentLeaderboardName()
 {
-  if ((!Steam_Initialized()) || (CurrentLeaderboard == NULL)) return "";
+  if ((!Steam_Initialized()) || (CurrentLeaderboard == NULL)) return NULL;
   return SteamUserStats()->GetLeaderboardName(CurrentLeaderboard);
 }
 
 char const* SteamLeaderboard::GetLeaderName(int index)
 {
-  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return "";
+  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return NULL;
   return SteamFriends()->GetFriendPersonaName(LeaderboardEntries[index].m_steamIDUser);
 }
 
@@ -165,7 +165,7 @@ int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType type)
 char const* SteamLeaderboard_GetCurrentLeadboardName()
 {
   char const *leaderboardName = SteamLeaderboards->GetCurrentLeaderboardName();
-  return engine->CreateScriptString(leaderboardName == NULL ? "" : leaderboardName);
+  return (leaderboardName == NULL ? NULL : engine->CreateScriptString(leaderboardName));
 }
 
 void SteamLeaderboard_FindLeaderboard(char const *leaderboardName)
@@ -186,7 +186,7 @@ int SteamLeaderboard_DownloadScores(int rawType)
 char const* SteamLeaderboard_GetLeaderName(int index)
 {
   char const *leaderName = SteamLeaderboards->GetLeaderName(index);
-  return engine->CreateScriptString(leaderName == NULL ? "" : leaderName);
+  return (leaderName == NULL ? NULL : engine->CreateScriptString(leaderName));
 }
 
 int SteamLeaderboard_GetLeaderScore(int index)

@@ -13,3 +13,4 @@ Release Win32/**
 *.vcproj*
 *.vcxproj*
 libAGSteam.*
+*.opensdf

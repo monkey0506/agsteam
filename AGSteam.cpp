@@ -218,15 +218,15 @@ IAGSEngine *engine;
 
 char const* Steam_GetCurrentGameLanguage()
 {
-  if (!Steam_Initialized()) return engine->CreateScriptString("");
+  if (!Steam_Initialized()) return NULL;
   char const *language = SteamApps()->GetCurrentGameLanguage();
-  return engine->CreateScriptString(language == NULL ? "" : language);
+  return (language == NULL ? NULL : engine->CreateScriptString(language));
 }
 
 char const* Steam_GetUserName()
 {
-  if (!Steam_Initialized()) return engine->CreateScriptString("");
-  return engine->CreateScriptString(SteamFriends()->GetPersonaName()); // GUARANTEED to not be NULL
+  if (!Steam_Initialized()) return NULL;
+  return engine->CreateScriptString(SteamFriends()->GetPersonaName()); // GetPersonaName is GUARANTEED to not be NULL
 }
 
 void AGS_EngineStartup(IAGSEngine *lpEngine)
