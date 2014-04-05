@@ -218,37 +218,39 @@ int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType type)
 
 char const* SteamLeaderboard_GetCurrentLeadboardName()
 {
+  if (SteamLeaderboards == NULL) return NULL;
   char const *leaderboardName = SteamLeaderboards->GetCurrentLeaderboardName();
   return (leaderboardName == NULL ? NULL : engine->CreateScriptString(leaderboardName));
 }
 
 void SteamLeaderboard_FindLeaderboard(char const *leaderboardName)
 {
-  SteamLeaderboards->FindLeaderboard(leaderboardName);
+  if (SteamLeaderboards != NULL) SteamLeaderboards->FindLeaderboard(leaderboardName);
 }
 
 int SteamLeaderboard_UploadScore(int score)
 {
-  return SteamLeaderboards->UploadScore(score);
+  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->UploadScore(score));
 }
 
 int SteamLeaderboard_DownloadScores(int rawType)
 {
-  return SteamLeaderboards->DownloadScores(MapAGSteamScoresRequestToNative(rawType));
+  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->DownloadScores(MapAGSteamScoresRequestToNative(rawType)));
 }
 
 char const* SteamLeaderboard_GetLeaderName(int index)
 {
+  if (SteamLeaderboards == NULL) return NULL;
   char const *leaderName = SteamLeaderboards->GetLeaderName(index);
   return (leaderName == NULL ? NULL : engine->CreateScriptString(leaderName));
 }
 
 int SteamLeaderboard_GetLeaderScore(int index)
 {
-  return SteamLeaderboards->GetLeaderScore(index);
+  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->GetLeaderScore(index));
 }
 
 int SteamLeaderboard_GetLeaderCount()
 {
-  return SteamLeaderboards->LeaderboardEntriesCount;
+  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->LeaderboardEntriesCount);
 }

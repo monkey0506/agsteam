@@ -287,6 +287,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
         engine->AbortGame("Engine interface is too old, need newer version of AGS.");
     }
 
+    Steam_Initialized(); // we don't care about the result, by try to initialize everything here if we can
+
     engine->RegisterScriptFunction("AGSteam::IsAchievementAchieved^1", reinterpret_cast<void*>(SteamAchievement_IsAchievementAchieved));
     engine->RegisterScriptFunction("AGSteam::SetAchievementAchieved^1", reinterpret_cast<void*>(SteamAchievement_SetAchieved));
     engine->RegisterScriptFunction("AGSteam::ResetAchievement^1", reinterpret_cast<void*>(SteamAchievement_ClearAchievement));

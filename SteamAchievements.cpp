@@ -90,9 +90,7 @@
 //
 #include "SteamAchievements.h"
 
-#ifndef WINDOWS_VERSION
 extern int const Steam_Initialized();
-#endif // WINDOWS_VERSION
 SteamAchievement *SteamAchievements = NULL;
 
 SteamAchievement::SteamAchievement() : AppID(0), Initialized(false),
@@ -174,15 +172,15 @@ void SteamAchievement::OnAchievementStored(UserAchievementStored_t *pCallback)
 // Helper methods because the AGS plugin API requires casting the function pointer to void*
 int SteamAchievement_ClearAchievement(char const *ID)
 {
-  return SteamAchievements->ClearAchievement(ID);
+  return (SteamAchievements == NULL ? 0 : SteamAchievements->ClearAchievement(ID));
 }
 
 int SteamAchievement_SetAchieved(char const *ID)
 {
-	return SteamAchievements->SetAchievementAchieved(ID);
+  return (SteamAchievements == NULL ? 0 : SteamAchievements->SetAchievementAchieved(ID));
 }
 
 int SteamAchievement_IsAchievementAchieved(char const *ID)
 {
-	return SteamAchievements->IsAchievementAchieved(ID);
+  return (SteamAchievements == NULL ? 0 : SteamAchievements->IsAchievementAchieved(ID));
 }

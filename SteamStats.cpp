@@ -236,42 +236,42 @@ bool SteamStat::UpdateAvgRateStat(char const *name, float numerator, float denom
 // AGS helper methods
 int SteamStat_GetIntStat(char const *name)
 {
-	return SteamStats->GetIntStat(name);
+	return (SteamStats == NULL ? 0 : SteamStats->GetIntStat(name));
 }
 
 int SteamStat_GetGlobalIntStat(char const *name)
 {
-  return SteamStats->GetIntStat(name);
+  return (SteamStats == NULL ? 0 : SteamStats->GetIntStat(name));
 }
 
 float SteamStat_GetFloatStat(char const *name)
 {
-	return SteamStats->GetFloatStat(name);
+	return (SteamStats == NULL ? 0.0f : SteamStats->GetFloatStat(name));
 }
 
 float SteamStat_GetGlobalFloatStat(char const *name)
 {
-  return SteamStats->GetGlobalFloatStat(name);
+  return (SteamStats == NULL ? 0.0f : SteamStats->GetGlobalFloatStat(name));
 }
 
 float SteamStat_GetAvgRateStat(char const *name)
 {
-	return SteamStats->GetAvgRateStat(name);
+	return (SteamStats == NULL ? 0.0f : SteamStats->GetAvgRateStat(name));
 }
 
 int SteamStat_SetIntStat(char const *name, int value)
 {
-  return SteamStats->SetIntStat(name, value);
+  return (SteamStats == NULL ? 0 : SteamStats->SetIntStat(name, value));
 }
 
 int SteamStat_SetFloatStat(const char *name, float value)
 {
-  return SteamStats->SetFloatStat(name, value);
+  return (SteamStats == NULL ? 0 : SteamStats->SetFloatStat(name, value));
 }
 
 int SteamStat_UpdateAvgRateStat(const char *name, float numerator, float denominator)
 {
-  return SteamStats->UpdateAvgRateStat(name, numerator, denominator);
+  return (SteamStats == NULL ? 0 : SteamStats->UpdateAvgRateStat(name, numerator, denominator));
 }
 
 void SteamStat_ResetStats()
