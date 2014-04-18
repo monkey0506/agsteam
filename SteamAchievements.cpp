@@ -133,7 +133,8 @@ int SteamAchievement::SetAchievementAchieved(char const *ID)
 {
 	if ((!Steam_Initialized()) || (!Initialized)) return false; // Steam not initialized or haven't received call back from Steam yet, so we can't set achievements
 	SteamUserStats()->SetAchievement(ID);
-	return SteamUserStats()->StoreStats();
+	int result = SteamUserStats()->StoreStats();
+  SteamAPI_RunCallbacks();
 }
 
 void SteamAchievement::OnUserStatsReceived(UserStatsReceived_t *pCallback)
