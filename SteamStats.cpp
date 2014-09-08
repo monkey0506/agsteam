@@ -88,19 +88,24 @@
 // 2 APRIL 2014. AUTHORIZED PERSONNEL OF PHOENIX ONLINE STUDIOS LLC ARE HEREBY AUTHORIZED BY MONKEYMOTO
 // PRODUCTIONS, INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
+#include "Stub/IAGSteam.h"
 #include "SteamStats.h"
 
-extern int const Steam_Initialized();
-SteamStat *SteamStats = NULL;
+namespace AGSteam
+{
+namespace Plugin
+{
+
+using namespace Stub;
 
 SteamStat::SteamStat() : AppID(0), Initialized(false), CallbackUserStatsReceived(this, &SteamStat::OnUserStatsReceived),
                          CallbackUserStatsStored(this, &SteamStat::OnUserStatsStored),
                          CallResultGlobalStatsReceived()
 {
-	if (!Steam_Initialized()) return;
+	if (!AGSteam_IsSteamInitialized()) return;
 	AppID = SteamUtils()->GetAppID();
 	RequestStats();
-  CallResultGlobalStatsReceived.Set((SteamUserStats() == NULL ? 0 : SteamUserStats()->RequestGlobalStats(0)), this, &SteamStat::OnGlobalStatsReceived);
+    CallResultGlobalStatsReceived.Set((SteamUserStats() == NULL ? 0 : SteamUserStats()->RequestGlobalStats(0)), this, &SteamStat::OnGlobalStatsReceived);
 }
 
 SteamStat::~SteamStat()
@@ -109,74 +114,46 @@ SteamStat::~SteamStat()
 
 bool SteamStat::RequestStats()
 {
-	if ((!Steam_Initialized()) || (SteamUserStats() == NULL) || (SteamUser() == NULL)) return false; // Steam not loaded
+	if ((!AGSteam_IsSteamInitialized()) || (SteamUserStats() == NULL) || (SteamUser() == NULL)) return false; // Steam not loaded
 	if (!SteamUser()->BLoggedOn()) return false; // not logged on
 	return SteamUserStats()->RequestCurrentStats();
 }
 
 bool SteamStat::StoreStats()
 {
-	if ((!Steam_Initialized()) || (!Initialized)) return false;
+	if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false;
 	return SteamUserStats()->StoreStats();
 }
 
 void SteamStat::OnUserStatsReceived(UserStatsReceived_t *pCallback)
 {
 	if (pCallback->m_nGameID != AppID) return; // callback is for another game's stats, ignore it
-	if (pCallback->m_eResult == k_EResultOK)
-	{
-		OutputDebugString("Received stats and achievements from Steam\n");
-		Initialized = true;
-	}
-	else
-	{
-		char buffer[128];
-		_snprintf(buffer, 128, "RequestStats - failed, %d\n", pCallback->m_eResult);
-		OutputDebugString(buffer);
-	}
+	if (pCallback->m_eResult == k_EResultOK) Initialized = true;
 }
 
 void SteamStat::OnGlobalStatsReceived(GlobalStatsReceived_t *pCallResult, bool IOFailure)
 {
-  if (pCallResult->m_nGameID != AppID) return;
-  if (pCallResult->m_eResult == k_EResultOK)
-  {
-    OutputDebugString("Received global stats from Steam\n");
-  }
-  else
-  {
-    char buffer[128];
-    _snprintf(buffer, 128, "RequestGlobalStats - failed, %d\n", pCallResult->m_eResult);
-    OutputDebugString(buffer);
-  }
+    if (pCallResult->m_nGameID != AppID) return;
 }
 
 void SteamStat::OnUserStatsStored(UserStatsStored_t *pCallback)
 {
 	if (pCallback->m_nGameID != AppID) return; // callback is for another game's stats, ignore them
-	if (pCallback->m_eResult == k_EResultOK) OutputDebugString("StoreStats - success\n");
-	else if (pCallback->m_eResult == k_EResultInvalidParam)
+    if ((pCallback->m_eResult != k_EResultOK) && (pCallback->m_eResult == k_EResultInvalidParam))
 	{
 		// One or more stats we set broke a constraint. They've been reverted,
 		// and we should re-interate the values now to keep in sync.
-		OutputDebugString("StoreStats - some failed to validate\n");
 		// Fake a callback here so that we reload the values
 		UserStatsReceived_t callback;
 		callback.m_eResult = k_EResultOK;
 		callback.m_nGameID = AppID;
 		OnUserStatsReceived(&callback);
 	}
-	else
-	{
-		char buffer[128];
-		_snprintf(buffer, 128, "StoreStats - failed, %d\n", pCallback->m_eResult);
-		OutputDebugString(buffer);
-	}
 }
 
 int SteamStat::GetIntStat(char const *name)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return 0;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return 0;
   int32 i = 0;
   SteamUserStats()->GetStat(name, &i);
   return static_cast<int>(i);
@@ -184,7 +161,7 @@ int SteamStat::GetIntStat(char const *name)
 
 int SteamStat::GetGlobalIntStat(char const *name)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return 0;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return 0;
   int64 i = 0;
   SteamUserStats()->GetGlobalStat(name, &i);
   return static_cast<int>(i);
@@ -192,15 +169,15 @@ int SteamStat::GetGlobalIntStat(char const *name)
 
 float SteamStat::GetFloatStat(char const *name)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return 0.0f;
-  float f = 0.0f;
+    if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return 0.0f;
+    float f = 0.0f;
 	SteamUserStats()->GetStat(name, &f);
 	return f;
 }
 
 float SteamStat::GetGlobalFloatStat(char const *name)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return 0;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return 0;
   double d = 0.0f;
   SteamUserStats()->GetGlobalStat(name, &d);
   return static_cast<float>(d);
@@ -213,69 +190,33 @@ float SteamStat::GetAvgRateStat(char const *name)
 
 bool SteamStat::SetIntStat(char const *name, int value)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return false;
-  SteamUserStats()->SetStat(name, static_cast<int32>(value));
-	return StoreStats();
+    if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false;
+    SteamUserStats()->SetStat(name, static_cast<int32>(value));
+    int result = StoreStats();
+    SteamAPI_RunCallbacks();
+	return (result != 0);
 }
 
 bool SteamStat::SetFloatStat(char const *name, float value)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return false;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false;
   SteamUserStats()->SetStat(name, value);
 	return StoreStats();
 }
 
 bool SteamStat::UpdateAvgRateStat(char const *name, float numerator, float denominator)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return false;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false;
   SteamUserStats()->UpdateAvgRateStat(name, numerator, denominator);
   GetFloatStat(name); // the API examples always call this for average rates, not sure if this is a necessary step here
 	return StoreStats();
 }
 
-// AGS helper methods
-int SteamStat_GetIntStat(char const *name)
+void SteamStat::ResetStats()
 {
-	return (SteamStats == NULL ? 0 : SteamStats->GetIntStat(name));
+    if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return;
+    SteamUserStats()->ResetAllStats(false);
 }
 
-int SteamStat_GetGlobalIntStat(char const *name)
-{
-  return (SteamStats == NULL ? 0 : SteamStats->GetIntStat(name));
-}
-
-float SteamStat_GetFloatStat(char const *name)
-{
-	return (SteamStats == NULL ? 0.0f : SteamStats->GetFloatStat(name));
-}
-
-float SteamStat_GetGlobalFloatStat(char const *name)
-{
-  return (SteamStats == NULL ? 0.0f : SteamStats->GetGlobalFloatStat(name));
-}
-
-float SteamStat_GetAvgRateStat(char const *name)
-{
-	return (SteamStats == NULL ? 0.0f : SteamStats->GetAvgRateStat(name));
-}
-
-int SteamStat_SetIntStat(char const *name, int value)
-{
-  return (SteamStats == NULL ? 0 : SteamStats->SetIntStat(name, value));
-}
-
-int SteamStat_SetFloatStat(const char *name, float value)
-{
-  return (SteamStats == NULL ? 0 : SteamStats->SetFloatStat(name, value));
-}
-
-int SteamStat_UpdateAvgRateStat(const char *name, float numerator, float denominator)
-{
-  return (SteamStats == NULL ? 0 : SteamStats->UpdateAvgRateStat(name, numerator, denominator));
-}
-
-void SteamStat_ResetStats()
-{
-	if (!Steam_Initialized()) return;
-	SteamUserStats()->ResetAllStats(false);
-}
+} // namespace Plugin
+} // namespace AGSteam

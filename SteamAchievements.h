@@ -96,13 +96,17 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif // WIN32_LEAN_AND_MEAN
-#elif !defined(OutputDebugString) // !_WIN32
-#define OutputDebugString(X) (void)X
-#endif // _WIN32, !OutputDebugString
+#endif // _WIN32
 
+#include "Stub/ISteamAchievement.h"
 #include "steam/steam_api.h"
 
-class SteamAchievement
+namespace AGSteam
+{
+namespace Plugin
+{
+
+class SteamAchievement : public Stub::ISteamAchievement
 {
 private:
     uint32 AppID; // the game's application ID
@@ -115,15 +119,14 @@ public:
     bool ClearAchievement(char const *ID); // clears/resets an achievement
     bool IsAchievementAchieved(char const *ID); // checks an achievement
     bool RequestStats(); // requests info from Steam
-    int SetAchievementAchieved(char const *ID); // sets an achievement
+    bool SetAchievementAchieved(char const *ID); // sets an achievement
 
     STEAM_CALLBACK(SteamAchievement, OnUserStatsReceived, UserStatsReceived_t, CallbackUserStatsReceived);
     STEAM_CALLBACK(SteamAchievement, OnUserStatsStored, UserStatsStored_t, CallbackUserStatsStored);
     STEAM_CALLBACK(SteamAchievement, OnAchievementStored, UserAchievementStored_t, CallbackAchievementStored);
 };
 
-int SteamAchievement_ClearAchievement(char const*);
-int SteamAchievement_IsAchievementAchieved(char const*);
-int SteamAchievement_SetAchieved(char const*);
+} // namespace Plugin
+} // namespace AGSteam
 
 #endif // AGSteam_SteamAchievements_H

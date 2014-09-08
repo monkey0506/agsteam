@@ -1,16 +1,2 @@
-.objs/**
-Debug/**
-Debug Win32/**
-Release/**
-Release Win32/**
-*.cbp
-*.depend
-*.layout
-*.ncb
-*.sdf
-*.sln
-*.suo
-*.vcproj*
-*.vcxproj*
-libAGSteam.*
-*.opensdf
+AGSteam/**
+AGSteamStub/**

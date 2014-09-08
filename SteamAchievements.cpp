@@ -88,17 +88,22 @@
 // 2 APRIL 2014. AUTHORIZED PERSONNEL OF PHOENIX ONLINE STUDIOS LLC ARE HEREBY AUTHORIZED BY MONKEYMOTO
 // PRODUCTIONS, INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
+#include "Stub/IAGSteam.h"
 #include "SteamAchievements.h"
 
-extern int const Steam_Initialized();
-SteamAchievement *SteamAchievements = NULL;
+namespace AGSteam
+{
+namespace Plugin
+{
+
+using namespace Stub;
 
 SteamAchievement::SteamAchievement() : AppID(0), Initialized(false),
                                        CallbackUserStatsReceived(this, &SteamAchievement::OnUserStatsReceived),
                                        CallbackUserStatsStored(this, &SteamAchievement::OnUserStatsStored),
                                        CallbackAchievementStored(this, &SteamAchievement::OnAchievementStored)
 {
-	if (!Steam_Initialized()) return;
+	if (!AGSteam_IsSteamInitialized()) return;
 	AppID = SteamUtils()->GetAppID();
 	RequestStats();
 }
@@ -109,14 +114,14 @@ SteamAchievement::~SteamAchievement()
 
 bool SteamAchievement::ClearAchievement(char const *ID)
 {
-  if ((!Steam_Initialized()) || (!Initialized)) return false;
+  if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false;
   SteamUserStats()->ClearAchievement(ID);
   return SteamUserStats()->StoreStats(); // confusingly named, this stores the stats and achievements
 }
 
 bool SteamAchievement::IsAchievementAchieved(char const *ID)
 {
-	if ((!Steam_Initialized()) || (!Initialized)) return false; // Steam not initialized, we can't do anything
+	if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false; // Steam not initialized, we can't do anything
 	bool achieved = false;
 	SteamUserStats()->GetAchievement(ID, &achieved);
 	return achieved;
@@ -124,64 +129,34 @@ bool SteamAchievement::IsAchievementAchieved(char const *ID)
 
 bool SteamAchievement::RequestStats() // helper to validate necessary info before the request
 {
-	if ((!Steam_Initialized()) || (SteamUserStats() == NULL) || (SteamUser() == NULL)) return false; // Steam not loaded
+	if ((!AGSteam_IsSteamInitialized()) || (SteamUserStats() == NULL) || (SteamUser() == NULL)) return false; // Steam not loaded
 	if (!SteamUser()->BLoggedOn()) return false; // user not logged on
 	return SteamUserStats()->RequestCurrentStats();
 }
 
-int SteamAchievement::SetAchievementAchieved(char const *ID)
+bool SteamAchievement::SetAchievementAchieved(char const *ID)
 {
-	if ((!Steam_Initialized()) || (!Initialized)) return false; // Steam not initialized or haven't received call back from Steam yet, so we can't set achievements
-	SteamUserStats()->SetAchievement(ID);
-	int result = SteamUserStats()->StoreStats();
-  SteamAPI_RunCallbacks();
+	if ((!AGSteam_IsSteamInitialized()) || (!Initialized)) return false; // Steam not initialized or haven't received call back from Steam yet, so we can't set achievements
+	int result =SteamUserStats()->SetAchievement(ID);
+	SteamUserStats()->StoreStats();
+    SteamAPI_RunCallbacks();
+    return (result != 0);
 }
 
 void SteamAchievement::OnUserStatsReceived(UserStatsReceived_t *pCallback)
 {
 	if (pCallback->m_nGameID != AppID) return;
-	if (pCallback->m_eResult == k_EResultOK)
-	{
-		OutputDebugString("Received stats and achievements from Steam\n");
-		Initialized = true; // a callback has been received, achievement info is now accessible
-	}
-	else
-	{
-		char buffer[128];
-		_snprintf(buffer, 128, "RequestStats - failed, %d\n", pCallback->m_eResult);
-		OutputDebugString(buffer);
-	}
+	if (pCallback->m_eResult == k_EResultOK) Initialized = true; // a callback has been received, achievement info is now accessible
 }
 
 void SteamAchievement::OnUserStatsStored(UserStatsStored_t *pCallback)
 {
 	if (pCallback->m_nGameID != AppID) return; // callback is for another game's stats, ignore it
-	if (pCallback->m_eResult == k_EResultOK) OutputDebugString("Stored stats for Steam\n");
-	else
-	{
-		char buffer[128];
-		_snprintf(buffer, 128, "StoreStats - failed, %d\n", pCallback->m_eResult);
-		OutputDebugString(buffer);
-	}
 }
 
 void SteamAchievement::OnAchievementStored(UserAchievementStored_t *pCallback)
 {
-	if (pCallback->m_nGameID == AppID) OutputDebugString("Stored Achievement for Steam\n"); // callback may be for another game's stats, if so, ignore it
 }
 
-// Helper methods because the AGS plugin API requires casting the function pointer to void*
-int SteamAchievement_ClearAchievement(char const *ID)
-{
-  return (SteamAchievements == NULL ? 0 : SteamAchievements->ClearAchievement(ID));
-}
-
-int SteamAchievement_SetAchieved(char const *ID)
-{
-  return (SteamAchievements == NULL ? 0 : SteamAchievements->SetAchievementAchieved(ID));
-}
-
-int SteamAchievement_IsAchievementAchieved(char const *ID)
-{
-  return (SteamAchievements == NULL ? 0 : SteamAchievements->IsAchievementAchieved(ID));
-}
+} // namespace Plugin
+} // namespace AGSteam

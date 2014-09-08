@@ -88,12 +88,16 @@
 // 2 APRIL 2014. AUTHORIZED PERSONNEL OF PHOENIX ONLINE STUDIOS LLC ARE HEREBY AUTHORIZED BY MONKEYMOTO
 // PRODUCTIONS, INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#include "agsplugin.h"
+#include "Stub/agsplugin.h"
+#include "Stub/IAGSteam.h"
 #include "SteamLeaderboards.h"
 
-SteamLeaderboard *SteamLeaderboards = NULL;
-extern IAGSEngine *engine;
-extern int const Steam_Initialized();
+namespace AGSteam
+{
+namespace Plugin
+{
+
+using namespace Stub;
 
 SteamLeaderboard::SteamLeaderboard() : CurrentLeaderboard(NULL), LeaderboardEntriesCount(0),
                                          CallResultFindLeaderboard(), CallResultUploadScore(),
@@ -119,11 +123,7 @@ void SteamLeaderboard::FindLeaderboard(char const *leaderboardName)
 void SteamLeaderboard::OnFindLeaderboard(LeaderboardFindResult_t *callback, bool IOFailure)
 {
   // see if there was an error
-  if ((!callback->m_bLeaderboardFound) || (IOFailure))
-  {
-    OutputDebugString("Leaderboard could not be found\n");
-    return;
-  }
+  if ((!callback->m_bLeaderboardFound) || (IOFailure)) return;
   CurrentLeaderboard = callback->m_hSteamLeaderboard;
 }
 
@@ -136,10 +136,6 @@ bool SteamLeaderboard::UploadScore(int score)
 
 void SteamLeaderboard::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool IOFailure)
 {
-  if ((!callback->m_bSuccess) || (IOFailure))
-  {
-    OutputDebugString("Score could not be uploaded to Steam\n");
-  }
 }
 
 bool SteamLeaderboard::DownloadScores(AGSteamScoresRequestType type)
@@ -149,7 +145,12 @@ bool SteamLeaderboard::DownloadScores(AGSteamScoresRequestType type)
   return true;
 }
 
-inline int get_min(int a, int b) // MSVC++ seems to be defining "min" as a macro but GCC expects std::min -- this is simpler
+bool SteamLeaderboard::DownloadScores(int type)
+{
+    return DownloadScores(MapAGSteamScoresRequestToNative(type));
+}
+
+inline int get_min(int a, int b) // MSVC++ defines "min" as a macro but GCC expects std::min -- this is simpler
 {
   return (a > b ? b : a);
 }
@@ -171,86 +172,26 @@ void SteamLeaderboard::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, 
 
 char const* SteamLeaderboard::GetCurrentLeaderboardName()
 {
-  if ((!Steam_Initialized()) || (CurrentLeaderboard == NULL)) return NULL;
+  if ((!AGSteam_IsSteamInitialized()) || (CurrentLeaderboard == NULL)) return NULL;
   return SteamUserStats()->GetLeaderboardName(CurrentLeaderboard);
 }
 
 char const* SteamLeaderboard::GetLeaderName(int index)
 {
-  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return NULL;
+  if ((!AGSteam_IsSteamInitialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return NULL;
   return SteamFriends()->GetFriendPersonaName(LeaderboardEntries[index].m_steamIDUser);
 }
 
 int SteamLeaderboard::GetLeaderScore(int index)
 {
-  if ((!Steam_Initialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return 0;
+  if ((!AGSteam_IsSteamInitialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return 0;
   return static_cast<int>(LeaderboardEntries[index].m_nScore);
 }
 
-AGSteamScoresRequestType MapAGSteamScoresRequestToNative(int raw)
+int SteamLeaderboard::GetLeaderCount()
 {
-  switch (raw)
-  {
-  case 0:
-    return eAGSteamScoresRequestGlobal;
-  case 1:
-    return eAGSteamScoresRequestAroundUser;
-  case 2:
-    return eAGSteamScoresRequestFriends;
-  default:
-    return static_cast<AGSteamScoresRequestType>(0);
-  }
+    return LeaderboardEntriesCount;
 }
 
-int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType type)
-{
-  switch (type)
-  {
-  case eAGSteamScoresRequestAroundUser:
-    return 1;
-  case eAGSteamScoresRequestFriends:
-    return 2;
-  case eAGSteamScoresRequestGlobal:
-  default:
-    return 0;
-  }
-}
-
-char const* SteamLeaderboard_GetCurrentLeadboardName()
-{
-  if (SteamLeaderboards == NULL) return NULL;
-  char const *leaderboardName = SteamLeaderboards->GetCurrentLeaderboardName();
-  return (leaderboardName == NULL ? NULL : engine->CreateScriptString(leaderboardName));
-}
-
-void SteamLeaderboard_FindLeaderboard(char const *leaderboardName)
-{
-  if (SteamLeaderboards != NULL) SteamLeaderboards->FindLeaderboard(leaderboardName);
-}
-
-int SteamLeaderboard_UploadScore(int score)
-{
-  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->UploadScore(score));
-}
-
-int SteamLeaderboard_DownloadScores(int rawType)
-{
-  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->DownloadScores(MapAGSteamScoresRequestToNative(rawType)));
-}
-
-char const* SteamLeaderboard_GetLeaderName(int index)
-{
-  if (SteamLeaderboards == NULL) return NULL;
-  char const *leaderName = SteamLeaderboards->GetLeaderName(index);
-  return (leaderName == NULL ? NULL : engine->CreateScriptString(leaderName));
-}
-
-int SteamLeaderboard_GetLeaderScore(int index)
-{
-  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->GetLeaderScore(index));
-}
-
-int SteamLeaderboard_GetLeaderCount()
-{
-  return (SteamLeaderboards == NULL ? 0 : SteamLeaderboards->LeaderboardEntriesCount);
-}
+} // namespace Plugin
+} // namespace AGSteam

@@ -96,11 +96,15 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif // WIN32_LEAN_AND_MEAN
-#elif !defined(OutputDebugString) // !_WIN32
-#define OutputDebugString(X) (void)X
-#endif // _WIN32, !OutputDebugString
+#endif // _WIN32
 
+#include "Stub/ISteamLeaderboard.h"
 #include "steam/steam_api.h"
+
+namespace AGSteam
+{
+namespace Plugin
+{
 
 enum AGSteamScoresRequestType
 {
@@ -112,7 +116,7 @@ enum AGSteamScoresRequestType
 AGSteamScoresRequestType MapAGSteamScoresRequestToNative(int raw);
 int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType);
 
-class SteamLeaderboard
+class SteamLeaderboard : public Stub::ISteamLeaderboard
 {
 private:
   SteamLeaderboard_t CurrentLeaderboard;
@@ -127,9 +131,11 @@ public:
   void FindLeaderboard(char const *leaderboardName);
   bool UploadScore(int score);
   bool DownloadScores(AGSteamScoresRequestType);
+  bool DownloadScores(int);
   char const* GetCurrentLeaderboardName();
   char const* GetLeaderName(int index);
   int GetLeaderScore(int index);
+  int GetLeaderCount();
 
 #ifndef STEAM_CALLRESULT
 #define STEAM_CALLRESULT(thisclass, func, param, var) CCallResult<thisclass, param> var; void func(param *pParam, bool bIOFailure);
@@ -144,12 +150,7 @@ public:
 #endif // AGSTEAM_CALLRESULT
 };
 
-char const* SteamLeaderboard_GetCurrentLeadboardName();
-void SteamLeaderboard_FindLeaderboard(char const *leaderboardName);
-int SteamLeaderboard_UploadScore(int score);
-int SteamLeaderboard_DownloadScores(int rawType);
-char const* SteamLeaderboard_GetLeaderName(int index);
-int SteamLeaderboard_GetLeaderScore(int index);
-int SteamLeaderboard_GetLeaderCount();
+} // namespace Plugin
+} // namespace AGSteam
 
 #endif // AGSteam_SteamLeaderboards_H
