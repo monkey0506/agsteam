@@ -1,2 +1,8 @@
-AGSteam/**
-AGSteamStub/**
+Solutions/obj
+Solutions/Release
+*.depend
+*.layout
+*.ncb
+*.suo
+*.vcproj.user
+*.vcproj.*.user
