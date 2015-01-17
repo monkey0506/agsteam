@@ -99,7 +99,9 @@ namespace Plugin
 
 using namespace Stub;
 
-SteamLeaderboard::SteamLeaderboard() : CurrentLeaderboard(NULL), LeaderboardEntriesCount(0),
+SteamLeaderboard_t NullLeaderboard(static_cast<SteamLeaderboard_t>(NULL));
+
+SteamLeaderboard::SteamLeaderboard() : CurrentLeaderboard(NullLeaderboard), LeaderboardEntriesCount(0),
                                          CallResultFindLeaderboard(), CallResultUploadScore(),
                                          CallResultDownloadScore()
 {
@@ -116,7 +118,7 @@ SteamLeaderboard::~SteamLeaderboard()
 void SteamLeaderboard::FindLeaderboard(char const *leaderboardName)
 {
   if (leaderboardName == NULL) return;
-  CurrentLeaderboard = NULL;
+  CurrentLeaderboard = NullLeaderboard;
   CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), this, &SteamLeaderboard::OnFindLeaderboard);
 }
 
@@ -129,7 +131,7 @@ void SteamLeaderboard::OnFindLeaderboard(LeaderboardFindResult_t *callback, bool
 
 bool SteamLeaderboard::UploadScore(int score)
 {
-  if (CurrentLeaderboard == NULL) return false;
+  if (CurrentLeaderboard == NullLeaderboard) return false;
   CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(CurrentLeaderboard, k_ELeaderboardUploadScoreMethodKeepBest, static_cast<int32>(score), NULL, 0), this, &SteamLeaderboard::OnUploadScore);
   return true;
 }
@@ -140,7 +142,7 @@ void SteamLeaderboard::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool 
 
 bool SteamLeaderboard::DownloadScores(AGSteamScoresRequestType type)
 {
-  if (CurrentLeaderboard == NULL) return false;
+  if (CurrentLeaderboard == NullLeaderboard) return false;
   CallResultDownloadScore.Set(SteamUserStats()->DownloadLeaderboardEntries(CurrentLeaderboard, static_cast<ELeaderboardDataRequest>(type), -4, 5), this, &SteamLeaderboard::OnDownloadScore);
   return true;
 }
@@ -172,7 +174,7 @@ void SteamLeaderboard::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, 
 
 char const* SteamLeaderboard::GetCurrentLeaderboardName()
 {
-  if ((!AGSteam_IsSteamInitialized()) || (CurrentLeaderboard == NULL)) return NULL;
+  if ((!AGSteam_IsSteamInitialized()) || (CurrentLeaderboard == NullLeaderboard)) return NULL;
   return SteamUserStats()->GetLeaderboardName(CurrentLeaderboard);
 }
 
