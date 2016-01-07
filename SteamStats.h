@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -106,64 +106,30 @@
 #ifndef AGSteam_SteamStats_H
 #define AGSteam_SteamStats_H
 
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif // WIN32_LEAN_AND_MEAN
-#endif // _WIN32
-
-#include "Stub/ISteamStat.h"
-#include "steam/steam_api.h"
+#include "Stub/StatsStub.h"
 
 namespace AGSteam
 {
-namespace Plugin
-{
+	namespace Plugin
+	{
 
-enum StatTypes
-{
-    eStatInt = 0,
-    eStatFloat = 1,
-    eStatAvgRate = 2
-};
+		class SteamStats : public Stub::StatsStub
+		{
+		protected:
+			SteamStats() noexcept = default;
 
-class SteamStat : public Stub::ISteamStat
-{
-private:
-    uint32 AppID; // the game's application ID
-    bool Initialized; // whether the game has received a callback from Steam
+		public:
+			static SteamStats& GetSteamStats() noexcept;
+			~SteamStats() noexcept = default;
+			int GetIntStat(char const *name) const noexcept override; // retrieves a stat
+			float GetFloatStat(char const *name) const noexcept override;
+			float GetAverageRateStat(char const *name) const noexcept override;
+			bool SetIntStat(char const *name, int value) const noexcept override; // sets a stat
+			bool SetFloatStat(char const *name, float value) const noexcept override;
+			bool UpdateAverageRateStat(char const *name, float numerator, float denominator) const noexcept override; // updates average rate with new data
+		};
 
-public:
-    SteamStat();
-    ~SteamStat();
-
-    int GetIntStat(char const *name); // retrieves a stat
-    float GetFloatStat(char const *name);
-    float GetAvgRateStat(char const *name);
-    bool RequestStats(); // requests info from Steam
-    bool SetIntStat(char const *name, int value); // sets a stat
-    bool SetFloatStat(char const *name, float value);
-    bool StoreStats(); // stores stats in Steam
-    bool UpdateAvgRateStat(char const *name, float numerator, float denominator); // updates average rate with new data
-    int GetGlobalIntStat(char const *name);
-    float GetGlobalFloatStat(char const *name);
-    void ResetStats();
-
-    STEAM_CALLBACK(SteamStat, OnUserStatsReceived, UserStatsReceived_t, CallbackUserStatsReceived);
-    STEAM_CALLBACK(SteamStat, OnUserStatsStored, UserStatsStored_t, CallbackUserStatsStored);
-    #ifndef STEAM_CALLRESULT
-    #define STEAM_CALLRESULT(thisclass, func, param, var) CCallResult<thisclass, param> var; void func(param *pParam, bool bIOFailure);
-    #define AGSTEAM_CALLRESULT
-    #endif // !STEAM_CALLRESULT
-    STEAM_CALLRESULT(SteamStat, OnGlobalStatsReceived, GlobalStatsReceived_t, CallResultGlobalStatsReceived);
-    #ifdef AGSTEAM_CALLRESULT
-    #undef STEAM_CALLRESULT
-    #undef AGSTEAM_CALLRESULT
-    #endif // AGSTEAM_CALLRESULT
-};
-
-} // namespace Plugin
+	} // namespace Plugin
 } // namespace AGSteam
 
 #endif // AGSteam_SteamStats_H

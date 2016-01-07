@@ -110,7 +110,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="M:\Development\Steamworks\131\sdk\public"
+				AdditionalIncludeDirectories="M:\Development\Tools\Steamworks\133b\sdk\public"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;AGSTEAM_EXPORTS;WINDOWS_VERSION;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -131,7 +131,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="steam_api.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="M:\Development\Steamworks\131\sdk\redistributable_bin"
+				AdditionalLibraryDirectories="M:\Development\Tools\Steamworks\133b\sdk\redistributable_bin"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

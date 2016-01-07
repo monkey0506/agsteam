@@ -7,3 +7,8 @@ Solutions/Release
 *.suo
 *.vcproj.user
 *.vcproj.*.user
+Solutions/Backup
+Solutions/UpgradeLog.htm
+Steamworks
+*.sdf
+*.opensdf

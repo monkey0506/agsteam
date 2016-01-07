@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -106,188 +106,33 @@
 #ifndef AGSTEAM_AGSTEAMPLUGIN_H
 #define AGSTEAM_AGSTEAMPLUGIN_H
 
-#include "Stub/agsplugin.h"
-#include "Stub/IAGSteam.h"
-#include "SteamAchievements.h"
-#include "SteamLeaderboards.h"
-#include "SteamStats.h"
-#include "steam/steam_api.h"
-#ifdef GetUserName
-#undef GetUserName
-#endif // GetUserName
-
-IAGSEngine *GetAGSEngine();
+#include "Stub/AGSteamStub.h"
 
 namespace AGSteam
 {
-namespace Plugin
-{
+	namespace Plugin
+	{
 
-class AGSteamPlugin : public Stub::IAGSteam
-{
-private:
-    SteamAchievement *SteamAchievements;
-    SteamLeaderboard *SteamLeaderboards;
-    SteamStat *SteamStats;
+		class AGSteamPlugin : public Stub::AGSteamStub
+		{
+		protected:
+			AGSteamPlugin() noexcept = default;
 
-public:
-    Stub::ISteamAchievement* GetSteamAchievement()
-    {
-        return SteamAchievements;
-    }
+		public:
+			static AGSteamPlugin& GetAGSteamPlugin() noexcept;
+			~AGSteamPlugin() noexcept = default;
+			bool IsInitialized() const noexcept override;
+			void ResetStatsAndAchievements() const noexcept override;
+			char const* GetCurrentGameLanguage() const noexcept;
+			char const* GetUserName() const noexcept override;
+			void Startup() const noexcept override;
+			void Update() const noexcept override;
+			char const* GetAGSPluginName() const noexcept override;
+			char const* GetAGSPluginDesc() const noexcept override;
+			float GetVersion() const noexcept override;
+		};
 
-    Stub::ISteamLeaderboard* GetSteamLeaderboard()
-    {
-        return SteamLeaderboards;
-    }
-
-    Stub::ISteamStat* GetSteamStat()
-    {
-        return SteamStats;
-    }
-
-    bool IsInitialized()
-    {
-        // helper method for the plugin to ensure that the call to Steam is placed before any other Steam functions
-        // this function also serves for the AGS property
-        static bool steamInitialized = false;
-        if (!steamInitialized)
-        {
-            steamInitialized = SteamAPI_Init();
-            if (steamInitialized)
-            {
-                SteamAchievements = new SteamAchievement;
-                SteamLeaderboards = new SteamLeaderboard;
-                SteamStats = new SteamStat;
-				Update(); // when first initialized, ensure user achievement and stats are updated in-game immediately
-            }
-        }
-        return steamInitialized;
-    }
-
-    void ResetStatsAndAchievements()
-    {
-        if (!IsInitialized()) return;
-        SteamUserStats()->ResetAllStats(true);
-    }
-
-    char const* GetCurrentGameLanguage()
-    {
-        if (!IsInitialized()) return NULL;
-        char const *language = SteamApps()->GetCurrentGameLanguage();
-        return (language == NULL ? NULL : GetAGSEngine()->CreateScriptString(language));
-    }
-
-    char const* GetUserName()
-    {
-        if (!IsInitialized()) return NULL;
-        return GetAGSEngine()->CreateScriptString(SteamFriends()->GetPersonaName()); // GetPersonaName is GUARANTEED to not be NULL
-    }
-
-    void Shutdown()
-    {
-        delete SteamAchievements;
-        SteamAchievements = NULL;
-        delete SteamLeaderboards;
-        SteamLeaderboards = NULL;
-        delete SteamStats;
-        SteamStats = NULL;
-    }
-
-    void Update()
-    {
-        SteamAPI_RunCallbacks();
-    }
-
-    char const* GetAGSScriptHeader()
-    {
-        return "#define AGSteam_VERSION 3.1\r\n"
-            "\r\n"
-            "enum AGSteamStatType\r\n"
-            "{\r\n"
-            "  eAGSteamStatInt = 0,\r\n"
-            "  eAGSteamStatFloat = 1,\r\n"
-            "  eAGSteamStatAverageRate = 2\r\n"
-            "};\r\n"
-            "\r\n"
-            "enum AGSteamScoresRequestType\r\n"
-            "{\r\n"
-            "  eAGSteamScoresRequestGlobal = 0,\r\n"
-            "  eAGSteamScoresRequestAroundUser = 1,\r\n"
-            "  eAGSteamScoresRequestFriends = 2\r\n"
-            "};\r\n"
-            "\r\n"
-            "managed struct AGSteam\r\n"
-            "{\r\n"
-            "  ///AGSteam: Returns whether the specified Steam achievement has been achieved\r\n"
-            "  import static int IsAchievementAchieved(const string steamAchievementID);\r\n"
-            "  ///AGSteam: Sets a Steam achievement as achieved\r\n"
-            "  import static int SetAchievementAchieved(const string steamAchievementID);\r\n"
-            "  ///AGSteam: Resets the specified Steam achievement, so it can be achieved again\r\n"
-            "  import static int ResetAchievement(const string steamAchievementID);\r\n"
-            "  ///AGSteam: Sets the value of a Steam INT stat\r\n"
-            "  import static int SetIntStat(const string steamStatName, int value);\r\n"
-            "  ///AGSteam: Sets the value of a Steam FLOAT stat\r\n"
-            "  import static int SetFloatStat(const string steamStatName, float value);\r\n"
-            "  ///AGSteam: Updates a Steam AVGRATE stat\r\n"
-            "  import static int UpdateAverageRateStat(const string steamStatName, float numerator, float denominator);\r\n"
-            "  ///AGSteam: Returns the value of a Steam INT stat\r\n"
-            "  import static int GetIntStat(const string steamStatName);\r\n"
-            "  ///AGSteam: Returns the value of a Steam FLOAT stat\r\n"
-            "  import static float GetFloatStat(const string steamStatName);\r\n"
-            "  ///AGSteam: Returns the value of a Steam AVGRATE stat\r\n"
-            "  import static float GetAverageRateStat(const string steamStatName);\r\n"
-            "  ///AGSteam: Resets all Steam stats to their default values\r\n"
-            "  import static void ResetStats();\r\n"
-            "  ///AGSteam: Resets all Steam stats and achievements\r\n"
-            "  import static void ResetStatsAndAchievements();\r\n"
-            "  ///AGSteam: Returns whether the Steam client is loaded and the user logged in\r\n"
-            "  readonly import static attribute int Initialized;\r\n"
-            "  ///AGSteam: Returns the value of a global Steam INT stat\r\n"
-            "  import static int GetGlobalIntStat(const string steamStatName);\r\n"
-            "  ///AGSteam: Returns the value of a global Steam FLOAT stat\r\n"
-            "  import static float GetGlobalFloatStat(const string steamStatName);\r\n"
-            "  ///AGSteam: Returns the name of the current leaderboard (call FindLeadboard first)\r\n"
-            "  readonly import static attribute String CurrentLeaderboardName;\r\n"
-            "  ///AGSteam: Requests to load the specified Steam leaderboard. This call is asynchronous and does not return the data immediately, check for results in repeatedly_execute.\r\n"
-            "  import static void FindLeaderboard(const string leaderboardName);\r\n"
-            "  ///AGSteam: Uploads the score to the current Steam leaderboard. Returns false if an error occurred.\r\n"
-            "  import static int UploadScore(int score);\r\n"
-            "  ///AGSteam: Downloads a list of ten scores from the current Steam leaderboard.\r\n"
-            "  import static int DownloadScores(AGSteamScoresRequestType);\r\n"
-            "  ///AGSteam: Returns the name associated with a downloaded score. Call DownloadScores first.\r\n"
-            "  readonly import static attribute String LeaderboardNames[];\r\n"
-            "  ///AGSteam: Returns a downloaded score. Call DownloadScores first.\r\n"
-            "  readonly import static attribute int LeaderboardScores[];\r\n"
-            "  ///AGSteam: Returns the number of downloaded scores (if any). Call DownloadScores first. Max is 10 scores.\r\n"
-            "  readonly import static attribute int LeaderboardCount;\r\n"
-            "  ///AGSteam: Returns the current game language as registered by the Steam client.\r\n"
-            "  import static String GetCurrentGameLanguage();\r\n"
-            "  ///AGSteam: Returns the Steam user's username.\r\n"
-            "  import static String GetUserName();\r\n"
-            "};\r\n"
-            "\r\n";
-    }
-
-    char const* GetAGSPluginName()
-    {
-        return "AGSteam";
-    }
-
-    char const* GetAGSPluginDesc()
-    {
-        return "AGSteam: Steam API Plugin for AGS (C) 2011-2014 MonkeyMoto Productions, Inc.";
-    }
-
-    ~AGSteamPlugin()
-    {
-        Shutdown();
-    }
-};
-
-AGSteamPlugin& GetAGSteamPlugin();
-
-} // namespace Plugin
+	} // namespace Plugin
 } // namespace AGSteam
 
 #endif // AGSTEAM_AGSTEAMPLUGIN_H

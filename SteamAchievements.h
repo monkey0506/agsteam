@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -103,45 +103,31 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#ifndef AGSteam_SteamAchievements_H
-#define AGSteam_SteamAchievements_H
+#ifndef AGSteam_SteamAchievementss_H
+#define AGSteam_SteamAchievementss_H
 
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif // WIN32_LEAN_AND_MEAN
-#endif // _WIN32
-
-#include "Stub/ISteamAchievement.h"
+#include "Stub/AchievementsStub.h"
 #include "steam/steam_api.h"
 
 namespace AGSteam
 {
-namespace Plugin
-{
+	namespace Plugin
+	{
 
-class SteamAchievement : public Stub::ISteamAchievement
-{
-private:
-    uint32 AppID; // the game's application ID
-    bool Initialized; // whether the game has received a callback from Steam
+		class SteamAchievements : public Stub::AchievementsStub
+		{
+		protected:
+			SteamAchievements() noexcept = default;
 
-public:
-    SteamAchievement();
-    ~SteamAchievement();
+		public:
+			static SteamAchievements& GetSteamAchievements() noexcept;
+			~SteamAchievements() noexcept = default;
+			bool ResetAchievement(char const *ID) const noexcept override; // clears/resets an achievement
+			bool IsAchievementAchieved(char const *ID) const noexcept override; // checks an achievement
+			bool SetAchievementAchieved(char const *ID) const noexcept override; // sets an achievement
+		};
 
-    bool ClearAchievement(char const *ID); // clears/resets an achievement
-    bool IsAchievementAchieved(char const *ID); // checks an achievement
-    bool RequestStats(); // requests info from Steam
-    bool SetAchievementAchieved(char const *ID); // sets an achievement
-
-    STEAM_CALLBACK(SteamAchievement, OnUserStatsReceived, UserStatsReceived_t, CallbackUserStatsReceived);
-    STEAM_CALLBACK(SteamAchievement, OnUserStatsStored, UserStatsStored_t, CallbackUserStatsStored);
-    STEAM_CALLBACK(SteamAchievement, OnAchievementStored, UserAchievementStored_t, CallbackAchievementStored);
-};
-
-} // namespace Plugin
+	} // namespace Plugin
 } // namespace AGSteam
 
-#endif // AGSteam_SteamAchievements_H
+#endif // AGSteam_SteamAchievementss_H

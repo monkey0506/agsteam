@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -103,72 +103,102 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
+#include "Stub/ags2client/agsplugin.h"
 #include "AGSteamPlugin.h"
+#include "steam/steam_api.h"
+using namespace AGSteam::Plugin;
 
-namespace AGSteam
-{
-namespace Plugin
-{
+static bool SteamInitialized = false;
 
-AGSteamPlugin plugin;
-
-AGSteamPlugin& GetAGSteamPlugin()
+struct UserStatsReceivedListener
 {
-    return plugin;
+public:
+	static UserStatsReceivedListener& GetListener() noexcept
+	{
+		static UserStatsReceivedListener listener{};
+		return listener;
+	}
+
+	STEAM_CALLBACK(UserStatsReceivedListener, OnUserStatsReceived, UserStatsReceived_t, CallbackUserStatsReceived);
+
+private:
+	UserStatsReceivedListener() noexcept : CallbackUserStatsReceived{ this, &UserStatsReceivedListener::OnUserStatsReceived }
+	{
+	}
+};
+
+void UserStatsReceivedListener::OnUserStatsReceived(UserStatsReceived_t *pCallback)
+{
+	if (pCallback->m_nGameID != SteamUtils()->GetAppID()) return;
+	if (pCallback->m_eResult == k_EResultOK)
+	{
+		SteamInitialized = true; // a callback has been received, stat+achievement info is now accessible
+	}
 }
 
-AGSteamScoresRequestType MapAGSteamScoresRequestToNative(int raw)
+AGSteamPlugin& AGSteamPlugin::GetAGSteamPlugin() noexcept
 {
-  switch (raw)
-  {
-  case 0:
-    return eAGSteamScoresRequestGlobal;
-  case 1:
-    return eAGSteamScoresRequestAroundUser;
-  case 2:
-    return eAGSteamScoresRequestFriends;
-  default:
-    return static_cast<AGSteamScoresRequestType>(0);
-  }
+	static AGSteamPlugin plugin{};
+	return plugin;
 }
 
-int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType type)
+void AGSteamPlugin_Initialize() noexcept
 {
-  switch (type)
-  {
-  case eAGSteamScoresRequestAroundUser:
-    return 1;
-  case eAGSteamScoresRequestFriends:
-    return 2;
-  case eAGSteamScoresRequestGlobal:
-  default:
-    return 0;
-  }
+	if (!SteamInitialized)
+	{
+		if (!SteamAPI_Init())
+		{
+			return;
+		}
+		auto &listener = UserStatsReceivedListener::GetListener();
+		SteamUserStats()->RequestCurrentStats();
+	}
 }
 
-} // namespace Plugin
-namespace Stub
+bool AGSteamPlugin::IsInitialized() const noexcept
 {
-
-IAGSteam* GetAGSteam()
-{
-    return &Plugin::plugin;
+	// helper method for the plugin to ensure that the call to Steam is placed before any other Steam functions
+	// this function also serves for the AGS property
+	return SteamInitialized;
 }
 
-ISteamAchievement* GetSteamAchievement()
+void AGSteamPlugin::ResetStatsAndAchievements() const noexcept
 {
-    return Plugin::plugin.GetSteamAchievement();
+	if (!IsInitialized()) return;
+	SteamUserStats()->ResetAllStats(true);
 }
 
-ISteamLeaderboard* GetSteamLeaderboard()
+char const* AGSteamPlugin::GetCurrentGameLanguage() const noexcept
 {
-    return Plugin::plugin.GetSteamLeaderboard();
+	return (IsInitialized() ? SteamApps()->GetCurrentGameLanguage() : nullptr);
 }
 
-ISteamStat* GetSteamStat()
+char const* AGSteamPlugin::GetUserName() const noexcept
 {
-    return Plugin::plugin.GetSteamStat();
+	return (IsInitialized() ? SteamFriends()->GetPersonaName() : nullptr);
 }
 
-} // namespace Stub
-} // namespace AGSteam
+void AGSteamPlugin::Startup() const noexcept
+{
+	AGSteamPlugin_Initialize();
+}
+
+void AGSteamPlugin::Update() const noexcept
+{
+	SteamAPI_RunCallbacks();
+}
+
+float AGSteamPlugin::GetVersion() const noexcept
+{
+	return 3.2f;
+}
+
+char const* AGSteamPlugin::GetAGSPluginName() const noexcept
+{
+	return "AGSteam";
+}
+
+char const* AGSteamPlugin::GetAGSPluginDesc() const noexcept
+{
+	return "AGSteam: Steam API Plugin for AGS (C) 2011-2016 MonkeyMoto Productions, Inc.";
+}

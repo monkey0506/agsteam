@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -106,66 +106,30 @@
 #ifndef AGSteam_SteamLeaderboards_H
 #define AGSteam_SteamLeaderboards_H
 
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif // WIN32_LEAN_AND_MEAN
-#endif // _WIN32
-
-#include "Stub/ISteamLeaderboard.h"
-#include "steam/steam_api.h"
+#include "Stub/LeaderboardsStub.h"
 
 namespace AGSteam
 {
-namespace Plugin
-{
+	namespace Plugin
+	{
 
-enum AGSteamScoresRequestType
-{
-  eAGSteamScoresRequestGlobal = k_ELeaderboardDataRequestGlobal,
-  eAGSteamScoresRequestAroundUser = k_ELeaderboardDataRequestGlobalAroundUser,
-  eAGSteamScoresRequestFriends = k_ELeaderboardDataRequestFriends
-};
+		class SteamLeaderboards : public Stub::LeaderboardsStub
+		{
+		private:
+			SteamLeaderboards() noexcept = default;
 
-AGSteamScoresRequestType MapAGSteamScoresRequestToNative(int raw);
-int MapAGSteamScoresRequestToAGS(AGSteamScoresRequestType);
+		public:
+			static SteamLeaderboards& GetSteamLeaderboards() noexcept;
+			~SteamLeaderboards() noexcept = default;
+			void RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScoreType, int limit) const noexcept override;
+			bool UploadScore(int score) const noexcept override;
+			char const* GetCurrentLeaderboardName() const noexcept override;
+			char const* GetLeaderName(int index) const noexcept override;
+			int GetLeaderScore(int index) const noexcept override;
+			int GetLeaderCount() const noexcept override;
+		};
 
-class SteamLeaderboard : public Stub::ISteamLeaderboard
-{
-private:
-  SteamLeaderboard_t CurrentLeaderboard;
-
-public:
-  int LeaderboardEntriesCount;
-  LeaderboardEntry_t LeaderboardEntries[10];
-
-  SteamLeaderboard();
-  ~SteamLeaderboard();
-
-  void FindLeaderboard(char const *leaderboardName);
-  bool UploadScore(int score);
-  bool DownloadScores(AGSteamScoresRequestType);
-  bool DownloadScores(int);
-  char const* GetCurrentLeaderboardName();
-  char const* GetLeaderName(int index);
-  int GetLeaderScore(int index);
-  int GetLeaderCount();
-
-#ifndef STEAM_CALLRESULT
-#define STEAM_CALLRESULT(thisclass, func, param, var) CCallResult<thisclass, param> var; void func(param *pParam, bool bIOFailure);
-#define AGSTEAM_CALLRESULT
-#endif // !STEAM_CALLRESULT
-  STEAM_CALLRESULT(SteamLeaderboard, OnFindLeaderboard, LeaderboardFindResult_t, CallResultFindLeaderboard);
-  STEAM_CALLRESULT(SteamLeaderboard, OnUploadScore, LeaderboardScoreUploaded_t, CallResultUploadScore);
-  STEAM_CALLRESULT(SteamLeaderboard, OnDownloadScore, LeaderboardScoresDownloaded_t, CallResultDownloadScore);
-#ifdef AGSTEAM_CALLRESULT
-#undef STEAM_CALLRESULT
-#undef AGSTEAM_CALLRESULT
-#endif // AGSTEAM_CALLRESULT
-};
-
-} // namespace Plugin
+	} // namespace Plugin
 } // namespace AGSteam
 
 #endif // AGSteam_SteamLeaderboards_H

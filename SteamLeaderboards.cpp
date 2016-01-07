@@ -1,6 +1,6 @@
 //
 // AGSteam: Steam API Plugin for AGS
-// (C) 2011-2015 MonkeyMoto Productions, Inc.
+// (C) 2011-2016 MonkeyMoto Productions, Inc.
 //
 // NOTICE: THIS FILE IS NOT OPEN SOURCE, AND SHOULD NEVER LEAVE THE PROPERTIES OF MONKEYMOTO PRODUCTIONS, INC.
 // ("MMP") WITHOUT PRIOR EXPRESS WRITTEN PERMISSION INCLUDED AS AN ADDENDUM BELOW, ONLY BY AUTHORIZED
@@ -103,112 +103,126 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#include "Stub/agsplugin.h"
-#include "Stub/IAGSteam.h"
+#include <algorithm>
+#include <vector>
+#include "Stub/ags2client/IAGS2Client.h"
 #include "SteamLeaderboards.h"
+#include "steam/steam_api.h"
+using namespace AGSteam::Plugin;
+using namespace AGSteam::Stub;
 
-namespace AGSteam
+static struct LeaderboardListener
 {
-namespace Plugin
+private:
+	LeaderboardListener() = default;
+
+public:
+	static LeaderboardListener& GetLeaderboardListener() noexcept
+	{
+		static LeaderboardListener listener{};
+		return listener;
+	}
+
+#define LEADERBOARD_LISTENER_CALLRESULT(thisclass, func, param, var) CCallResult<thisclass, param> var; void func(param *pParam, bool bIOFailure)
+	LEADERBOARD_LISTENER_CALLRESULT(LeaderboardListener, OnFindLeaderboard, LeaderboardFindResult_t, CallResultFindLeaderboard);
+	LEADERBOARD_LISTENER_CALLRESULT(LeaderboardListener, OnUploadScore, LeaderboardScoreUploaded_t, CallResultUploadScore);
+	LEADERBOARD_LISTENER_CALLRESULT(LeaderboardListener, OnDownloadScore, LeaderboardScoresDownloaded_t, CallResultDownloadScore);
+#undef LEADERBOARD_LISTENER_CALLRESULT
+};
+
+static struct
 {
+	bool HasLeaderboard;
+	SteamLeaderboard_t CurrentLeaderboard;
+	std::vector<LeaderboardEntry_t> Entries;
+	int Limit;
+	ELeaderboardDataRequest Type;
+} leaderboard;
 
-using namespace Stub;
-
-SteamLeaderboard_t NullLeaderboard(static_cast<SteamLeaderboard_t>(NULL));
-
-SteamLeaderboard::SteamLeaderboard() : CurrentLeaderboard(NullLeaderboard), LeaderboardEntriesCount(0),
-                                         CallResultFindLeaderboard(), CallResultUploadScore(),
-                                         CallResultDownloadScore()
+SteamLeaderboards& SteamLeaderboards::GetSteamLeaderboards() noexcept
 {
-  for (int i = 0; i < 10; ++i)
-  {
-    LeaderboardEntries[i].m_steamIDUser.Clear();
-  }
+	static SteamLeaderboards leaderboards{};
+	return leaderboards;
 }
 
-SteamLeaderboard::~SteamLeaderboard()
+void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScoreType type, int limit) const noexcept
+{
+	if (leaderboardName == nullptr) return;
+	leaderboard.HasLeaderboard = false;
+	leaderboard.Entries.clear();
+	leaderboard.Limit = limit;
+	leaderboard.Type = static_cast<ELeaderboardDataRequest>(type);
+	auto &listener = LeaderboardListener::GetLeaderboardListener();
+	listener.CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), &listener, &LeaderboardListener::OnFindLeaderboard);
+}
+
+void LeaderboardListener::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool IOFailure)
 {
 }
 
-void SteamLeaderboard::FindLeaderboard(char const *leaderboardName)
+void LeaderboardListener::OnFindLeaderboard(LeaderboardFindResult_t *callback, bool IOFailure)
 {
-  if (leaderboardName == NULL) return;
-  CurrentLeaderboard = NullLeaderboard;
-  CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), this, &SteamLeaderboard::OnFindLeaderboard);
+	// see if there was an error
+	if ((!callback->m_bLeaderboardFound) || (IOFailure)) return;
+	leaderboard.HasLeaderboard = true;
+	leaderboard.CurrentLeaderboard = callback->m_hSteamLeaderboard;
+	int rangeStart = 1;
+	int rangeEnd = std::min(SteamUserStats()->GetLeaderboardEntryCount(leaderboard.CurrentLeaderboard), leaderboard.Limit);
+	if (leaderboard.Type == k_ELeaderboardDataRequestGlobalAroundUser)
+	{
+		rangeStart = -(rangeEnd / 2) + !(rangeEnd % 2);
+		rangeEnd = -rangeStart + 1;
+	}
+	CallResultDownloadScore.Set(SteamUserStats()->DownloadLeaderboardEntries(leaderboard.CurrentLeaderboard, static_cast<ELeaderboardDataRequest>(0), rangeStart, rangeEnd),
+		&LeaderboardListener::GetLeaderboardListener(), &LeaderboardListener::OnDownloadScore);
 }
 
-void SteamLeaderboard::OnFindLeaderboard(LeaderboardFindResult_t *callback, bool IOFailure)
+void LeaderboardListener::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, bool IOFailure)
 {
-  // see if there was an error
-  if ((!callback->m_bLeaderboardFound) || (IOFailure)) return;
-  CurrentLeaderboard = callback->m_hSteamLeaderboard;
+	if (IOFailure) return;
+	leaderboard.Entries.reserve(callback->m_cEntryCount);
+	LeaderboardEntry_t entry;
+	for (int i = 0; i < callback->m_cEntryCount; ++i)
+	{
+		SteamUserStats()->GetDownloadedLeaderboardEntry(callback->m_hSteamLeaderboardEntries, i, &entry, nullptr, 0);
+		leaderboard.Entries.push_back(entry);
+	}
 }
 
-bool SteamLeaderboard::UploadScore(int score)
+bool SteamLeaderboard_HasValidLeaderboardInfo(int *index) noexcept
 {
-  if (CurrentLeaderboard == NullLeaderboard) return false;
-  CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(CurrentLeaderboard, k_ELeaderboardUploadScoreMethodKeepBest, static_cast<int32>(score), NULL, 0), this, &SteamLeaderboard::OnUploadScore);
-  return true;
+	return ((AGS2Client::GetClient()->IsInitialized()) && (leaderboard.HasLeaderboard) &&
+		((index == nullptr) || (((*index) >= 0) && ((*index) < leaderboard.Entries.size()) && (leaderboard.Entries[*index].m_steamIDUser.IsValid()))));
 }
 
-void SteamLeaderboard::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool IOFailure)
+bool SteamLeaderboards::UploadScore(int score) const noexcept
 {
+	if (!SteamLeaderboard_HasValidLeaderboardInfo(nullptr)) return false;
+	auto &listener = LeaderboardListener::GetLeaderboardListener();
+	listener.CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(leaderboard.CurrentLeaderboard,
+		k_ELeaderboardUploadScoreMethodKeepBest, static_cast<int32>(score), nullptr, 0), &listener, &LeaderboardListener::OnUploadScore);
+	return true;
 }
 
-bool SteamLeaderboard::DownloadScores(AGSteamScoresRequestType type)
+char const* SteamLeaderboards::GetCurrentLeaderboardName() const noexcept
 {
-  if (CurrentLeaderboard == NullLeaderboard) return false;
-  CallResultDownloadScore.Set(SteamUserStats()->DownloadLeaderboardEntries(CurrentLeaderboard, static_cast<ELeaderboardDataRequest>(type), -4, 5), this, &SteamLeaderboard::OnDownloadScore);
-  return true;
+	if (!SteamLeaderboard_HasValidLeaderboardInfo(nullptr)) return nullptr;
+	return SteamUserStats()->GetLeaderboardName(leaderboard.CurrentLeaderboard);
 }
 
-bool SteamLeaderboard::DownloadScores(int type)
+char const* SteamLeaderboards::GetLeaderName(int index) const noexcept
 {
-    return DownloadScores(MapAGSteamScoresRequestToNative(type));
+	if (!SteamLeaderboard_HasValidLeaderboardInfo(&index)) return nullptr;
+	return SteamFriends()->GetFriendPersonaName(leaderboard.Entries[index].m_steamIDUser);
 }
 
-inline int get_min(int a, int b) // MSVC++ defines "min" as a macro but GCC expects std::min -- this is simpler
+int SteamLeaderboards::GetLeaderScore(int index) const noexcept
 {
-  return (a > b ? b : a);
+	if (!SteamLeaderboard_HasValidLeaderboardInfo(&index)) return 0;
+	return static_cast<int>(leaderboard.Entries[index].m_nScore);
 }
 
-void SteamLeaderboard::OnDownloadScore(LeaderboardScoresDownloaded_t *callback, bool IOFailure)
+int SteamLeaderboards::GetLeaderCount() const noexcept
 {
-  if (IOFailure) return;
-  LeaderboardEntriesCount = get_min(callback->m_cEntryCount, 10);
-  int i = 0;
-  for ( ; i < LeaderboardEntriesCount; ++i)
-  {
-    SteamUserStats()->GetDownloadedLeaderboardEntry(callback->m_hSteamLeaderboardEntries, i, &LeaderboardEntries[i], NULL, 0);
-  }
-  for ( ; i < 10; ++i)
-  {
-    LeaderboardEntries[i].m_steamIDUser.Clear();
-  }
+	return leaderboard.Entries.size();
 }
-
-char const* SteamLeaderboard::GetCurrentLeaderboardName()
-{
-  if ((!AGSteam_IsSteamInitialized()) || (CurrentLeaderboard == NullLeaderboard)) return NULL;
-  return SteamUserStats()->GetLeaderboardName(CurrentLeaderboard);
-}
-
-char const* SteamLeaderboard::GetLeaderName(int index)
-{
-  if ((!AGSteam_IsSteamInitialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return NULL;
-  return SteamFriends()->GetFriendPersonaName(LeaderboardEntries[index].m_steamIDUser);
-}
-
-int SteamLeaderboard::GetLeaderScore(int index)
-{
-  if ((!AGSteam_IsSteamInitialized()) || (index < 0) || (index > LeaderboardEntriesCount) || (!LeaderboardEntries[index].m_steamIDUser.IsValid())) return 0;
-  return static_cast<int>(LeaderboardEntries[index].m_nScore);
-}
-
-int SteamLeaderboard::GetLeaderCount()
-{
-    return LeaderboardEntriesCount;
-}
-
-} // namespace Plugin
-} // namespace AGSteam

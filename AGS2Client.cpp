@@ -103,37 +103,31 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#include "Stub/ags2client/IAGS2Client.h"
+#include "AGSteamPlugin.h"
 #include "SteamAchievements.h"
+#include "SteamLeaderboards.h"
+#include "SteamStats.h"
 using namespace AGSteam::Plugin;
-using namespace AGSteam::Stub;
 
-SteamAchievements& SteamAchievements::GetSteamAchievements() noexcept
+namespace AGS2Client
 {
-	static SteamAchievements achievements{};
-	return achievements;
-}
+	IAGS2Client* GetClient() noexcept
+	{
+		return &AGSteamPlugin::GetAGSteamPlugin();
+	}
 
-bool SteamAchievements::ResetAchievement(char const *ID) const noexcept
-{
-	if (!AGS2Client::GetClient()->IsInitialized()) return false;
-	SteamUserStats()->ClearAchievement(ID);
-	return SteamUserStats()->StoreStats();
-}
+	IClientAchievements* GetClientAchievements() noexcept
+	{
+		return &SteamAchievements::GetSteamAchievements();
+	}
 
-bool SteamAchievements::IsAchievementAchieved(char const *ID) const noexcept
-{
-	if (!AGS2Client::GetClient()->IsInitialized()) return false; // Steam not initialized, we can't do anything
-	bool achieved = false;
-	SteamUserStats()->GetAchievement(ID, &achieved);
-	return achieved;
-}
+	IClientLeaderboards* GetClientLeaderboards() noexcept
+	{
+		return &SteamLeaderboards::GetSteamLeaderboards();
+	}
 
-bool SteamAchievements::SetAchievementAchieved(char const *ID) const noexcept
-{
-	if (!AGS2Client::GetClient()->IsInitialized()) return false; // Steam not initialized or haven't received call back from Steam yet, so we can't set achievements
-	int result = SteamUserStats()->SetAchievement(ID);
-	SteamUserStats()->StoreStats();
-	SteamAPI_RunCallbacks();
-	return (result != 0);
+	IClientStats* GetClientStats() noexcept
+	{
+		return &SteamStats::GetSteamStats();
+	}
 }
