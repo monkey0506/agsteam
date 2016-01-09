@@ -111,7 +111,7 @@
 using namespace AGSteam::Plugin;
 using namespace AGSteam::Stub;
 
-static struct LeaderboardListener
+struct LeaderboardListener
 {
 private:
 	LeaderboardListener() = default;
