@@ -1,6 +1,6 @@
 Solutions/obj
-Solutions/Debug
-Solutions/Release
+Solutions/Debug*
+Solutions/Release*
 *.depend
 *.layout
 *.ncb
