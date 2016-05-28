@@ -145,7 +145,7 @@ SteamLeaderboards& SteamLeaderboards::GetSteamLeaderboards() noexcept
 	return leaderboards;
 }
 
-void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScoreType type, int limit) const noexcept
+void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScore::Type type, int limit) const noexcept
 {
 	if (leaderboardName == nullptr) return;
 	leaderboard.HasLeaderboard = false;
@@ -192,7 +192,7 @@ void LeaderboardListener::OnDownloadScore(LeaderboardScoresDownloaded_t *callbac
 bool SteamLeaderboard_HasValidLeaderboardInfo(int *index) noexcept
 {
 	return ((AGS2Client::GetClient()->IsInitialized()) && (leaderboard.HasLeaderboard) &&
-		((index == nullptr) || (((*index) >= 0) && ((*index) < leaderboard.Entries.size()) && (leaderboard.Entries[*index].m_steamIDUser.IsValid()))));
+		((index == nullptr) || (((*index) >= 0) && ((*index) < static_cast<int>(leaderboard.Entries.size())) && (leaderboard.Entries[*index].m_steamIDUser.IsValid()))));
 }
 
 bool SteamLeaderboards::UploadScore(int score) const noexcept

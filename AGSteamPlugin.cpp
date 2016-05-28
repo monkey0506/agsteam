@@ -150,7 +150,8 @@ void AGSteamPlugin_Initialize() noexcept
 		{
 			return;
 		}
-		auto &listener = UserStatsReceivedListener::GetListener();
+		//auto &listener = UserStatsReceivedListener::GetListener();
+		UserStatsReceivedListener::GetListener(); // ensure that listener is created
 		SteamUserStats()->RequestCurrentStats();
 	}
 }

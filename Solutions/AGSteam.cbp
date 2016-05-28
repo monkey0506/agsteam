@@ -20,13 +20,12 @@
 					<Add option="-Wl,rpath,." />
 					<Add option="-DLINUX_VERSION" />
 					<Add option="-DAGS2CLIENT_UNIFIED_CLIENT_NAME" />
-					<Add directory="../Steamworks/135/sdk/public" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
-					<Add directory="../Steamworks/135/sdk/redistributable_bin/linux64" />
+					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux64" />
 				</Linker>
 			</Target>
 			<Target title="Release32">
@@ -44,14 +43,13 @@
 					<Add option="-m32" />
 					<Add option="-DLINUX_VERSION" />
 					<Add option="-DAGS2CLIENT_UNIFIED_CLIENT_NAME" />
-					<Add directory="../Steamworks/135/sdk/public" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
 					<Add option="-m32" />
-					<Add directory="../Steamworks/135/sdk/redistributable_bin/linux32" />
+					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux32" />
 				</Linker>
 			</Target>
 			<Target title="Release-disjoint">
@@ -67,13 +65,12 @@
 					<Add option="-fPIC" />
 					<Add option="-Wl,rpath,." />
 					<Add option="-DLINUX_VERSION" />
-					<Add directory="../Steamworks/135/sdk/public" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
-					<Add directory="../Steamworks/135/sdk/redistributable_bin/linux64" />
+					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux64" />
 				</Linker>
 			</Target>
 			<Target title="Release32-disjoint">
@@ -90,20 +87,20 @@
 					<Add option="-Wl,rpath,." />
 					<Add option="-m32" />
 					<Add option="-DLINUX_VERSION" />
-					<Add directory="../Steamworks/135/sdk/public" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
 					<Add option="-m32" />
-					<Add directory="../Steamworks/135/sdk/redistributable_bin/linux32" />
+					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux32" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add directory="../../steamworks/137/sdk/public" />
 		</Compiler>
 		<Unit filename="../AGS2Client.cpp" />
 		<Unit filename="../AGSteamPlugin.cpp" />
@@ -114,19 +111,8 @@
 		<Unit filename="../SteamLeaderboards.h" />
 		<Unit filename="../SteamStats.cpp" />
 		<Unit filename="../SteamStats.h" />
-		<Unit filename="../Stub/AGSteamStub.cpp" />
-		<Unit filename="../Stub/AGSteamStub.h" />
-		<Unit filename="../Stub/AchievementsStub.cpp" />
-		<Unit filename="../Stub/AchievementsStub.h" />
-		<Unit filename="../Stub/IAGSteam.h" />
-		<Unit filename="../Stub/ISteamAchievement.h" />
-		<Unit filename="../Stub/ISteamLeaderboard.h" />
-		<Unit filename="../Stub/ISteamStat.h" />
-		<Unit filename="../Stub/LeaderboardsStub.cpp" />
-		<Unit filename="../Stub/LeaderboardsStub.h" />
-		<Unit filename="../Stub/StatsStub.cpp" />
-		<Unit filename="../Stub/StatsStub.h" />
 		<Unit filename="../Stub/ags2client/AGSFloatFix.h" />
+		<Unit filename="../Stub/ags2client/Cpp11Fix.h" />
 		<Unit filename="../Stub/ags2client/IAGS2Client.cpp" />
 		<Unit filename="../Stub/ags2client/IAGS2Client.h" />
 		<Unit filename="../Stub/ags2client/IClientAchievements.cpp" />
@@ -137,7 +123,6 @@
 		<Unit filename="../Stub/ags2client/IClientStats.h" />
 		<Unit filename="../Stub/ags2client/agsplugin.h" />
 		<Unit filename="../Stub/ags2client/main.cpp" />
-		<Unit filename="../Stub/agsplugin.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

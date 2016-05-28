@@ -121,7 +121,7 @@ namespace AGSteam
 		public:
 			static SteamLeaderboards& GetSteamLeaderboards() noexcept;
 			~SteamLeaderboards() noexcept = default;
-			void RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScoreType, int limit) const noexcept override;
+			void RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScore::Type, int limit) const noexcept override;
 			bool UploadScore(int score) const noexcept override;
 			char const* GetCurrentLeaderboardName() const noexcept override;
 			char const* GetLeaderName(int index) const noexcept override;
