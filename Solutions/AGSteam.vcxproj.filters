@@ -66,6 +66,9 @@
     <ClInclude Include="..\Stub\StatsStub.h">
       <Filter>Header Files\Stub</Filter>
     </ClInclude>
+    <ClInclude Include="..\Stub\ags2client\Cpp11Fix.h">
+      <Filter>Header Files\Stub\ags2client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Stub\ags2client\IAGS2Client.cpp">

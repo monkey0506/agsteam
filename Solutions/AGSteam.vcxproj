@@ -25,6 +25,7 @@
     <ClInclude Include="..\SteamStats.h" />
     <ClInclude Include="..\Stub\AchievementsStub.h" />
     <ClInclude Include="..\Stub\ags2client\agsplugin.h" />
+    <ClInclude Include="..\Stub\ags2client\Cpp11Fix.h" />
     <ClInclude Include="..\Stub\ags2client\IAGS2Client.h" />
     <ClInclude Include="..\Stub\ags2client\IClientAchievements.h" />
     <ClInclude Include="..\Stub\ags2client\IClientLeaderboards.h" />
