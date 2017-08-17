@@ -130,6 +130,7 @@ namespace AGSteam
 			char const* GetAGSPluginName() const noexcept override;
 			char const* GetAGSPluginDesc() const noexcept override;
 			float GetVersion() const noexcept override;
+			bool ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexcept override;
 		};
 
 	} // namespace Plugin

@@ -203,3 +203,8 @@ char const* AGSteamPlugin::GetAGSPluginDesc() const noexcept
 {
 	return "AGSteam: Steam API Plugin for AGS (C) 2011-2016 MonkeyMoto Productions, Inc.";
 }
+
+bool AGSteamPlugin::ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexcept
+{
+	return (IsInitialized() && SteamUtils()->IsOverlayEnabled());
+}
