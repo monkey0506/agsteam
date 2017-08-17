@@ -49,7 +49,7 @@
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
 					<Add option="-m32" />
-					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux32" />
+					<Add directory="../../steamworks/140/sdk/redistributable_bin/linux32" />
 				</Linker>
 			</Target>
 			<Target title="Release-disjoint">
@@ -70,7 +70,7 @@
 					<Add option="-s" />
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
-					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux64" />
+					<Add directory="../../steamworks/140/sdk/redistributable_bin/linux64" />
 				</Linker>
 			</Target>
 			<Target title="Release32-disjoint">
@@ -93,14 +93,14 @@
 					<Add option="-lsteam_api" />
 					<Add option="-fPIC" />
 					<Add option="-m32" />
-					<Add directory="../../steamworks/137/sdk/redistributable_bin/linux32" />
+					<Add directory="../../steamworks/140/sdk/redistributable_bin/linux32" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
-			<Add directory="../../steamworks/137/sdk/public" />
+			<Add directory="../../steamworks/140/sdk/public" />
 		</Compiler>
 		<Linker>
 			<Add option="-z defs" />
