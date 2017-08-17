@@ -40,12 +40,12 @@
     <ClCompile Include="..\SteamLeaderboards.cpp" />
     <ClCompile Include="..\SteamStats.cpp" />
     <ClCompile Include="..\Stub\AchievementsStub.cpp" />
+    <ClCompile Include="..\Stub\AGS2ClientStub.cpp" />
     <ClCompile Include="..\Stub\ags2client\IAGS2Client.cpp" />
     <ClCompile Include="..\Stub\ags2client\IClientAchievements.cpp" />
     <ClCompile Include="..\Stub\ags2client\IClientLeaderboards.cpp" />
     <ClCompile Include="..\Stub\ags2client\IClientStats.cpp" />
     <ClCompile Include="..\Stub\ags2client\main.cpp" />
-    <ClCompile Include="..\Stub\AGSteamStub.cpp" />
     <ClCompile Include="..\Stub\LeaderboardsStub.cpp" />
     <ClCompile Include="..\Stub\StatsStub.cpp" />
   </ItemGroup>

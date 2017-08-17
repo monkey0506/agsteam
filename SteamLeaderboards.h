@@ -113,7 +113,7 @@ namespace AGSteam
 	namespace Plugin
 	{
 
-		class SteamLeaderboards : public Stub::LeaderboardsStub
+		class SteamLeaderboards : public AGS2Client::Stub::LeaderboardsStub
 		{
 		private:
 			SteamLeaderboards() noexcept = default;

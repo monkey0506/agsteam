@@ -113,7 +113,7 @@ namespace AGSteam
 	namespace Plugin
 	{
 
-		class SteamStats : public Stub::StatsStub
+		class SteamStats : public AGS2Client::Stub::StatsStub
 		{
 		protected:
 			SteamStats() noexcept = default;

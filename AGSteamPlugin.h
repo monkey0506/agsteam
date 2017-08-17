@@ -106,14 +106,14 @@
 #ifndef AGSTEAM_AGSTEAMPLUGIN_H
 #define AGSTEAM_AGSTEAMPLUGIN_H
 
-#include "Stub/AGSteamStub.h"
+#include "Stub/AGS2ClientStub.h"
 
 namespace AGSteam
 {
 	namespace Plugin
 	{
 
-		class AGSteamPlugin : public Stub::AGSteamStub
+		class AGSteamPlugin : public AGS2Client::Stub::AGS2ClientStub
 		{
 		protected:
 			AGSteamPlugin() noexcept = default;

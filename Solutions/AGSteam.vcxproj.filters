@@ -98,9 +98,6 @@
     <ClCompile Include="..\Stub\AchievementsStub.cpp">
       <Filter>Source Files\Stub</Filter>
     </ClCompile>
-    <ClCompile Include="..\Stub\AGSteamStub.cpp">
-      <Filter>Source Files\Stub</Filter>
-    </ClCompile>
     <ClCompile Include="..\Stub\LeaderboardsStub.cpp">
       <Filter>Source Files\Stub</Filter>
     </ClCompile>
@@ -109,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="..\AGS2Client.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Stub\AGS2ClientStub.cpp">
+      <Filter>Source Files\Stub</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

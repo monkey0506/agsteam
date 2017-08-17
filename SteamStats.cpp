@@ -107,7 +107,7 @@
 #include "SteamStats.h"
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
-using namespace AGSteam::Stub;
+using namespace AGS2Client::Stub;
 
 SteamStats& SteamStats::GetSteamStats() noexcept
 {

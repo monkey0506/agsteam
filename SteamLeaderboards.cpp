@@ -109,7 +109,7 @@
 #include "SteamLeaderboards.h"
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
-using namespace AGSteam::Stub;
+using namespace AGS2Client::Stub;
 
 struct LeaderboardListener
 {

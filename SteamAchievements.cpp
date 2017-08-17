@@ -106,7 +106,7 @@
 #include "Stub/ags2client/IAGS2Client.h"
 #include "SteamAchievements.h"
 using namespace AGSteam::Plugin;
-using namespace AGSteam::Stub;
+using namespace AGS2Client::Stub;
 
 SteamAchievements& SteamAchievements::GetSteamAchievements() noexcept
 {

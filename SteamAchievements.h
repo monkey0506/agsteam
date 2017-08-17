@@ -114,7 +114,7 @@ namespace AGSteam
 	namespace Plugin
 	{
 
-		class SteamAchievements : public Stub::AchievementsStub
+		class SteamAchievements : public AGS2Client::Stub::AchievementsStub
 		{
 		protected:
 			SteamAchievements() noexcept = default;
