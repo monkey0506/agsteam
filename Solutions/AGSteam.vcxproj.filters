@@ -57,9 +57,6 @@
     <ClInclude Include="..\Stub\AchievementsStub.h">
       <Filter>Header Files\Stub</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\AGSteamStub.h">
-      <Filter>Header Files\Stub</Filter>
-    </ClInclude>
     <ClInclude Include="..\Stub\LeaderboardsStub.h">
       <Filter>Header Files\Stub</Filter>
     </ClInclude>
@@ -68,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="..\Stub\ags2client\Cpp11Fix.h">
       <Filter>Header Files\Stub\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Stub\AGS2ClientStub.h">
+      <Filter>Header Files\Stub</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

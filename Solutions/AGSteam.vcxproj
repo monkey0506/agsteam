@@ -24,13 +24,13 @@
     <ClInclude Include="..\SteamLeaderboards.h" />
     <ClInclude Include="..\SteamStats.h" />
     <ClInclude Include="..\Stub\AchievementsStub.h" />
+    <ClInclude Include="..\Stub\AGS2ClientStub.h" />
     <ClInclude Include="..\Stub\ags2client\agsplugin.h" />
     <ClInclude Include="..\Stub\ags2client\Cpp11Fix.h" />
     <ClInclude Include="..\Stub\ags2client\IAGS2Client.h" />
     <ClInclude Include="..\Stub\ags2client\IClientAchievements.h" />
     <ClInclude Include="..\Stub\ags2client\IClientLeaderboards.h" />
     <ClInclude Include="..\Stub\ags2client\IClientStats.h" />
-    <ClInclude Include="..\Stub\AGSteamStub.h" />
     <ClInclude Include="..\Stub\LeaderboardsStub.h" />
     <ClInclude Include="..\Stub\StatsStub.h" />
   </ItemGroup>
