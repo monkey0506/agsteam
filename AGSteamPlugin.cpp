@@ -103,7 +103,7 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#include "Stub/ags2client/agsplugin.h"
+#include "ags2client/agsplugin.h"
 #include "AGSteamPlugin.h"
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
@@ -182,6 +182,10 @@ char const* AGSteamPlugin::GetUserName() const noexcept
 void AGSteamPlugin::Startup() const noexcept
 {
 	AGSteamPlugin_Initialize();
+}
+
+void AGSteamPlugin::Shutdown() const noexcept
+{
 }
 
 void AGSteamPlugin::Update() const noexcept

@@ -103,11 +103,10 @@
 // SEPTEMBER 2015. AUTHORIZED PERSONNEL OF CLIFFTOP GAMES ARE HEREBY AUTHORIZED BY MONKEYMOTO PRODUCTIONS,
 // INC. TO ACCESS AND MODIFY THIS FILE, PURSUANT TO THE TERMS AND RESTRICTIONS DETAILED ABOVE.
 //
-#include "Stub/ags2client/IAGS2Client.h"
+#include "ags2client/IAGS2Client.h"
 #include "SteamStats.h"
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
-using namespace AGS2Client::Stub;
 
 SteamStats& SteamStats::GetSteamStats() noexcept
 {

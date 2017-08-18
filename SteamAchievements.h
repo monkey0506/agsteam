@@ -106,7 +106,7 @@
 #ifndef AGSteam_SteamAchievementss_H
 #define AGSteam_SteamAchievementss_H
 
-#include "Stub/AchievementsStub.h"
+#include "ags2client/IClientAchievements.h"
 #include "steam/steam_api.h"
 
 namespace AGSteam
@@ -114,7 +114,7 @@ namespace AGSteam
 	namespace Plugin
 	{
 
-		class SteamAchievements : public AGS2Client::Stub::AchievementsStub
+		class SteamAchievements : public AGS2Client::IClientAchievements
 		{
 		protected:
 			SteamAchievements() noexcept = default;

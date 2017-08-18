@@ -106,14 +106,14 @@
 #ifndef AGSteam_SteamLeaderboards_H
 #define AGSteam_SteamLeaderboards_H
 
-#include "Stub/LeaderboardsStub.h"
+#include "ags2client/IClientLeaderboards.h"
 
 namespace AGSteam
 {
 	namespace Plugin
 	{
 
-		class SteamLeaderboards : public AGS2Client::Stub::LeaderboardsStub
+		class SteamLeaderboards : public AGS2Client::IClientLeaderboards
 		{
 		private:
 			SteamLeaderboards() noexcept = default;

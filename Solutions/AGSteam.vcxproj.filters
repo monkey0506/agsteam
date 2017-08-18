@@ -13,35 +13,14 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files\Stub">
-      <UniqueIdentifier>{323b05ab-3744-43b4-8c2a-243842544d2e}</UniqueIdentifier>
+    <Filter Include="Header Files\ags2client">
+      <UniqueIdentifier>{b73acc0c-d581-417c-8276-3bbb22a88a37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Stub\ags2client">
-      <UniqueIdentifier>{26335967-bd50-4c8b-a404-b95a4414a8c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Stub">
-      <UniqueIdentifier>{fd9b9c7b-c8e3-42cd-818a-6eefc95f799a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Stub\ags2client">
-      <UniqueIdentifier>{813f7eed-2547-4d86-931f-e9ffe60f3efb}</UniqueIdentifier>
+    <Filter Include="Source Files\ags2client">
+      <UniqueIdentifier>{1af72739-1369-415b-853c-192ab910b478}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Stub\ags2client\agsplugin.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Stub\ags2client\IAGS2Client.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Stub\ags2client\IClientAchievements.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Stub\ags2client\IClientLeaderboards.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Stub\ags2client\IClientStats.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
-    </ClInclude>
     <ClInclude Include="..\AGSteamPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,38 +33,29 @@
     <ClInclude Include="..\SteamStats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\AchievementsStub.h">
-      <Filter>Header Files\Stub</Filter>
+    <ClInclude Include="..\ags2client\AGSFloatFix.h">
+      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\LeaderboardsStub.h">
-      <Filter>Header Files\Stub</Filter>
+    <ClInclude Include="..\ags2client\agsplugin.h">
+      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\StatsStub.h">
-      <Filter>Header Files\Stub</Filter>
+    <ClInclude Include="..\ags2client\Cpp11Fix.h">
+      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\ags2client\Cpp11Fix.h">
-      <Filter>Header Files\Stub\ags2client</Filter>
+    <ClInclude Include="..\ags2client\IAGS2Client.h">
+      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
-    <ClInclude Include="..\Stub\AGS2ClientStub.h">
-      <Filter>Header Files\Stub</Filter>
+    <ClInclude Include="..\ags2client\IClientAchievements.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ags2client\IClientLeaderboards.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ags2client\IClientStats.h">
+      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Stub\ags2client\IAGS2Client.cpp">
-      <Filter>Source Files\Stub\ags2client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\ags2client\IClientAchievements.cpp">
-      <Filter>Source Files\Stub\ags2client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\ags2client\IClientLeaderboards.cpp">
-      <Filter>Source Files\Stub\ags2client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\ags2client\IClientStats.cpp">
-      <Filter>Source Files\Stub\ags2client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\ags2client\main.cpp">
-      <Filter>Source Files\Stub\ags2client</Filter>
-    </ClCompile>
     <ClCompile Include="..\AGSteamPlugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -98,20 +68,23 @@
     <ClCompile Include="..\SteamStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Stub\AchievementsStub.cpp">
-      <Filter>Source Files\Stub</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\LeaderboardsStub.cpp">
-      <Filter>Source Files\Stub</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Stub\StatsStub.cpp">
-      <Filter>Source Files\Stub</Filter>
-    </ClCompile>
     <ClCompile Include="..\AGS2Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Stub\AGS2ClientStub.cpp">
-      <Filter>Source Files\Stub</Filter>
+    <ClCompile Include="..\ags2client\IAGS2Client.cpp">
+      <Filter>Source Files\ags2client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ags2client\IClientAchievements.cpp">
+      <Filter>Source Files\ags2client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ags2client\IClientLeaderboards.cpp">
+      <Filter>Source Files\ags2client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ags2client\IClientStats.cpp">
+      <Filter>Source Files\ags2client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ags2client\main.cpp">
+      <Filter>Source Files\ags2client</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

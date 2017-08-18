@@ -106,14 +106,14 @@
 #ifndef AGSTEAM_AGSTEAMPLUGIN_H
 #define AGSTEAM_AGSTEAMPLUGIN_H
 
-#include "Stub/AGS2ClientStub.h"
+#include "ags2client/IAGS2Client.h"
 
 namespace AGSteam
 {
 	namespace Plugin
 	{
 
-		class AGSteamPlugin : public AGS2Client::Stub::AGS2ClientStub
+		class AGSteamPlugin : public AGS2Client::IAGS2Client
 		{
 		protected:
 			AGSteamPlugin() noexcept = default;
@@ -126,6 +126,7 @@ namespace AGSteam
 			char const* GetCurrentGameLanguage() const noexcept;
 			char const* GetUserName() const noexcept override;
 			void Startup() const noexcept override;
+            void Shutdown() const noexcept override;
 			void Update() const noexcept override;
 			char const* GetAGSPluginName() const noexcept override;
 			char const* GetAGSPluginDesc() const noexcept override;

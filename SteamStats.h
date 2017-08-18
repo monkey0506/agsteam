@@ -106,14 +106,14 @@
 #ifndef AGSteam_SteamStats_H
 #define AGSteam_SteamStats_H
 
-#include "Stub/StatsStub.h"
+#include "ags2client/IClientStats.h"
 
 namespace AGSteam
 {
 	namespace Plugin
 	{
 
-		class SteamStats : public AGS2Client::Stub::StatsStub
+		class SteamStats : public AGS2Client::IClientStats
 		{
 		protected:
 			SteamStats() noexcept = default;

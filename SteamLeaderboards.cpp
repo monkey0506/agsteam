@@ -105,11 +105,10 @@
 //
 #include <algorithm>
 #include <vector>
-#include "Stub/ags2client/IAGS2Client.h"
+#include "ags2client/IAGS2Client.h"
 #include "SteamLeaderboards.h"
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
-using namespace AGS2Client::Stub;
 
 struct LeaderboardListener
 {
