@@ -5,8 +5,8 @@ Solutions/Release*
 *.layout
 *.ncb
 *.suo
-*.vcproj.user
-*.vcproj.*.user
+*.vc?proj.user
+*.vc?proj.*.user
 Solutions/Backup
 Solutions/UpgradeLog.htm
 Steamworks
