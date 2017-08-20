@@ -9,6 +9,10 @@
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
 
+#ifndef NDEBUG
+#include <fstream>
+#endif // DEBUG
+
 static bool SteamInitialized = false;
 
 struct UserStatsReceivedListener
@@ -43,18 +47,44 @@ AGSteamPlugin& AGSteamPlugin::GetAGSteamPlugin() noexcept
 	return plugin;
 }
 
+void debug_log(char const *c, bool close=false)
+{
+#ifndef NDEBUG
+    static std::ofstream ofstream{};
+    if (!ofstream.is_open())
+    {
+        ofstream.open("agsteam_debug.log");
+    }
+    ofstream << c << std::endl;
+    ofstream.flush();
+    if (close)
+    {
+        ofstream.close();
+    }
+#endif // NDEBUG
+}
+
 void AGSteamPlugin_Initialize() noexcept
 {
 	if (!SteamInitialized)
 	{
+        debug_log("Steam not initialized, calling SteamAPI_Init()");
 		if (!SteamAPI_Init())
 		{
+            debug_log("SteamAPI_Init() failed. Is Steam running and logged in?");
 			return;
 		}
+        debug_log("SteamAPI_Init() succeeded, creating UserStatsReceivedListener");
 		//auto &listener = UserStatsReceivedListener::GetListener();
 		UserStatsReceivedListener::GetListener(); // ensure that listener is created
+        debug_log("UserStatsReceivedListener created, requesting current stats");
 		SteamUserStats()->RequestCurrentStats();
+        debug_log("User stats requested, AGSteamPlugin_Initialize() complete", true);
 	}
+    else
+    {
+        debug_log("Steam already initialized");
+    }
 }
 
 bool AGSteamPlugin::IsInitialized() const noexcept
@@ -113,3 +143,14 @@ bool AGSteamPlugin::ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexc
 {
 	return (IsInitialized() && SteamUtils()->IsOverlayEnabled());
 }
+
+#ifndef NDEBUG
+extern void SteamLeaderboards_FindLeaderboard(char const *leaderboardName);
+
+void AGSteamPlugin::RegisterScriptFunctions(IAGSEngine *engine) const noexcept
+{
+    IAGS2Client::RegisterScriptFunctions(engine);
+    static std::string findLeaderboard = std::string{ GetClientNameForScript() } + "::FindLeaderboard^1";
+    engine->RegisterScriptFunction(findLeaderboard.c_str(), reinterpret_cast<void*>(SteamLeaderboards_FindLeaderboard));
+}
+#endif // NDEBUG

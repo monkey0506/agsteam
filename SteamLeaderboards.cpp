@@ -56,6 +56,13 @@ void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Clie
 	listener.CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), &listener, &LeaderboardListener::OnFindLeaderboard);
 }
 
+#ifndef NDEBUG
+void SteamLeaderboards_FindLeaderboard(char const *leaderboardName)
+{
+    SteamLeaderboards::GetSteamLeaderboards().RequestLeaderboard(nullptr, AGS2Client::LeaderboardScore::AroundUser, 10);
+}
+#endif // NDEBUG
+
 void LeaderboardListener::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool IOFailure)
 {
 }
