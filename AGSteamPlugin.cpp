@@ -47,20 +47,35 @@ AGSteamPlugin& AGSteamPlugin::GetAGSteamPlugin() noexcept
 	return plugin;
 }
 
-void debug_log(char const *c, bool close=false)
+#ifndef NDEBUG
+void debug_log(std::ofstream &ofstream)
+{
+}
+
+template<typename T>
+void debug_log(std::ofstream &ofstream, T &&t)
+{
+    ofstream << std::forward<T>(t);
+}
+
+template<typename T, typename ...Args>
+void debug_log(std::ofstream &ofstream, T &&t, Args &&...args)
+{
+    debug_log(ofstream, std::forward<T>(t));
+    debug_log(ofstream, std::forward<Args>(args)...);
+}
+#endif // NDEBUG
+
+template<typename ...Args>
+void debug_log(Args ...args)
 {
 #ifndef NDEBUG
     static std::ofstream ofstream{};
-    if (!ofstream.is_open())
-    {
-        ofstream.open("agsteam_debug.log");
-    }
-    ofstream << c << std::endl;
+    ofstream.open("agsteam_debug.log", std::ios::app);
+    debug_log(ofstream, std::forward<Args>(args)...);
+    ofstream << std::endl;
     ofstream.flush();
-    if (close)
-    {
-        ofstream.close();
-    }
+    ofstream.close();
 #endif // NDEBUG
 }
 
@@ -77,9 +92,9 @@ void AGSteamPlugin_Initialize() noexcept
         debug_log("SteamAPI_Init() succeeded, creating UserStatsReceivedListener");
 		//auto &listener = UserStatsReceivedListener::GetListener();
 		UserStatsReceivedListener::GetListener(); // ensure that listener is created
-        debug_log("UserStatsReceivedListener created, requesting current stats");
+        debug_log("UserStatsReceivedListener created, requesting current stats. SteamUserStats = '0x", SteamUserStats(), "'");
 		SteamUserStats()->RequestCurrentStats();
-        debug_log("User stats requested, AGSteamPlugin_Initialize() complete", true);
+        debug_log("User stats requested, AGSteamPlugin_Initialize() complete");
 	}
     else
     {
@@ -117,6 +132,7 @@ void AGSteamPlugin::Startup() const noexcept
 
 void AGSteamPlugin::Shutdown() const noexcept
 {
+    SteamAPI_Shutdown();
 }
 
 void AGSteamPlugin::Update() const noexcept
