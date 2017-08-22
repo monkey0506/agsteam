@@ -87,6 +87,7 @@ void AGSteamPlugin::Startup() const noexcept
 
 void AGSteamPlugin::Shutdown() const noexcept
 {
+    SteamAPI_Shutdown();
 }
 
 void AGSteamPlugin::Update() const noexcept
