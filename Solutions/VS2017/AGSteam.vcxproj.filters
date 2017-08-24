@@ -21,70 +21,70 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\AGSteamPlugin.h">
+    <ClInclude Include="..\..\ags2client\AGSFloatFix.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\agsplugin.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\Cpp11Fix.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\IAGS2Client.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\IClientAchievements.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\IClientLeaderboards.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ags2client\IClientStats.h">
+      <Filter>Header Files\ags2client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AGSteamPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SteamAchievements.h">
+    <ClInclude Include="..\..\SteamAchievements.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SteamLeaderboards.h">
+    <ClInclude Include="..\..\SteamLeaderboards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SteamStats.h">
+    <ClInclude Include="..\..\SteamStats.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\AGSFloatFix.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\agsplugin.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\Cpp11Fix.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\IAGS2Client.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\IClientAchievements.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\IClientLeaderboards.h">
-      <Filter>Header Files\ags2client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ags2client\IClientStats.h">
-      <Filter>Header Files\ags2client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\AGSteamPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SteamAchievements.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SteamLeaderboards.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SteamStats.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AGS2Client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ags2client\IAGS2Client.cpp">
+    <ClCompile Include="..\..\ags2client\IAGS2Client.cpp">
       <Filter>Source Files\ags2client</Filter>
     </ClCompile>
-    <ClCompile Include="..\ags2client\IClientAchievements.cpp">
+    <ClCompile Include="..\..\ags2client\IClientAchievements.cpp">
       <Filter>Source Files\ags2client</Filter>
     </ClCompile>
-    <ClCompile Include="..\ags2client\IClientLeaderboards.cpp">
+    <ClCompile Include="..\..\ags2client\IClientLeaderboards.cpp">
       <Filter>Source Files\ags2client</Filter>
     </ClCompile>
-    <ClCompile Include="..\ags2client\IClientStats.cpp">
+    <ClCompile Include="..\..\ags2client\IClientStats.cpp">
       <Filter>Source Files\ags2client</Filter>
     </ClCompile>
-    <ClCompile Include="..\ags2client\main.cpp">
+    <ClCompile Include="..\..\ags2client\main.cpp">
       <Filter>Source Files\ags2client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AGS2Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AGSteamPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SteamAchievements.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SteamLeaderboards.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SteamStats.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

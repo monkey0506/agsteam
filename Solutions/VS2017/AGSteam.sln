@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AGSteam", "AGSteam.vcxproj", "{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug-disjoint|Win32 = Debug-disjoint|Win32
+		Release|Win32 = Release|Win32
+		Release-disjoint|Win32 = Release-disjoint|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Debug|Win32.Build.0 = Debug|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Debug-disjoint|Win32.ActiveCfg = Debug-disjoint|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Debug-disjoint|Win32.Build.0 = Debug-disjoint|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Release|Win32.ActiveCfg = Release|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Release|Win32.Build.0 = Release|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Release-disjoint|Win32.ActiveCfg = Release-disjoint|Win32
+		{0D0B26C8-4010-45E6-8080-9063A3CCA0CF}.Release-disjoint|Win32.Build.0 = Release-disjoint|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

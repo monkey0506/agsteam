@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AGSteam", "AGSteam.vcproj", "{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug-disjoint|Win32 = Debug-disjoint|Win32
+		Release|Win32 = Release|Win32
+		Release-disjoint|Win32 = Release-disjoint|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Debug|Win32.Build.0 = Debug|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Debug-disjoint|Win32.ActiveCfg = Debug-disjoint|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Debug-disjoint|Win32.Build.0 = Debug-disjoint|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Release|Win32.ActiveCfg = Release|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Release|Win32.Build.0 = Release|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Release-disjoint|Win32.ActiveCfg = Release-disjoint|Win32
+		{422E7412-73AF-4BA5-BAB9-8FCDBD68D6F4}.Release-disjoint|Win32.Build.0 = Release-disjoint|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
