@@ -5,6 +5,7 @@
 #ifndef AGSteam_SteamLeaderboards_H
 #define AGSteam_SteamLeaderboards_H
 
+#include "ags2client/Cpp11Fix.h"
 #include "ags2client/IClientLeaderboards.h"
 
 namespace AGSteam
@@ -15,11 +16,11 @@ namespace AGSteam
 		class SteamLeaderboards : public AGS2Client::IClientLeaderboards
 		{
 		private:
-			SteamLeaderboards() noexcept = default;
+			DEFAULT_CTOR(SteamLeaderboards);
 
 		public:
+			DEFAULT_DTOR(SteamLeaderboards);
 			static SteamLeaderboards& GetSteamLeaderboards() noexcept;
-			~SteamLeaderboards() noexcept = default;
 			void RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScore::Type, int limit) const noexcept override;
 			bool UploadScore(int score) const noexcept override;
 			char const* GetCurrentLeaderboardName() const noexcept override;

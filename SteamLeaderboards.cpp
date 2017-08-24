@@ -14,12 +14,16 @@ using namespace AGSteam::Plugin;
 struct LeaderboardListener
 {
 private:
+#ifdef AGS2CLIENT_HAS_CPP11
 	LeaderboardListener() = default;
+#else
+	LeaderboardListener() {};
+#endif // AGS2CLIENT_HAS_CPP11
 
 public:
 	static LeaderboardListener& GetLeaderboardListener() noexcept
 	{
-		static LeaderboardListener listener{};
+		static LeaderboardListener listener;
 		return listener;
 	}
 
@@ -41,7 +45,7 @@ static struct
 
 SteamLeaderboards& SteamLeaderboards::GetSteamLeaderboards() noexcept
 {
-	static SteamLeaderboards leaderboards{};
+	static SteamLeaderboards leaderboards;
 	return leaderboards;
 }
 
@@ -52,7 +56,7 @@ void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Clie
 	leaderboard.Entries.clear();
 	leaderboard.Limit = limit;
 	leaderboard.Type = static_cast<ELeaderboardDataRequest>(type);
-	auto &listener = LeaderboardListener::GetLeaderboardListener();
+	LeaderboardListener &listener = LeaderboardListener::GetLeaderboardListener();
 	listener.CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), &listener, &LeaderboardListener::OnFindLeaderboard);
 }
 
@@ -98,7 +102,7 @@ bool SteamLeaderboard_HasValidLeaderboardInfo(int *index) noexcept
 bool SteamLeaderboards::UploadScore(int score) const noexcept
 {
 	if (!SteamLeaderboard_HasValidLeaderboardInfo(nullptr)) return false;
-	auto &listener = LeaderboardListener::GetLeaderboardListener();
+	LeaderboardListener &listener = LeaderboardListener::GetLeaderboardListener();
 	listener.CallResultUploadScore.Set(SteamUserStats()->UploadLeaderboardScore(leaderboard.CurrentLeaderboard,
 		k_ELeaderboardUploadScoreMethodKeepBest, static_cast<int32>(score), nullptr, 0), &listener, &LeaderboardListener::OnUploadScore);
 	return true;

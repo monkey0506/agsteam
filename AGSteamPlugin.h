@@ -5,6 +5,7 @@
 #ifndef AGSTEAM_AGSTEAMPLUGIN_H
 #define AGSTEAM_AGSTEAMPLUGIN_H
 
+#include "ags2client/Cpp11Fix.h"
 #include "ags2client/IAGS2Client.h"
 
 namespace AGSteam
@@ -15,11 +16,11 @@ namespace AGSteam
 		class AGSteamPlugin : public AGS2Client::IAGS2Client
 		{
 		protected:
-			AGSteamPlugin() noexcept = default;
+			DEFAULT_CTOR(AGSteamPlugin);
 
 		public:
+			DEFAULT_DTOR(AGSteamPlugin);
 			static AGSteamPlugin& GetAGSteamPlugin() noexcept;
-			~AGSteamPlugin() noexcept = default;
 			bool IsInitialized() const noexcept override;
 			void ResetStatsAndAchievements() const noexcept override;
 			char const* GetCurrentGameLanguage() const noexcept;

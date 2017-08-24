@@ -11,7 +11,7 @@ using namespace AGSteam::Plugin;
 
 SteamAchievements& SteamAchievements::GetSteamAchievements() noexcept
 {
-	static SteamAchievements achievements{};
+	static SteamAchievements achievements;
 	return achievements;
 }
 

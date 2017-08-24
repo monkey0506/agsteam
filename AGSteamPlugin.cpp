@@ -16,14 +16,14 @@ struct UserStatsReceivedListener
 public:
 	static UserStatsReceivedListener& GetListener() noexcept
 	{
-		static UserStatsReceivedListener listener{};
+		static UserStatsReceivedListener listener;
 		return listener;
 	}
 
 	STEAM_CALLBACK(UserStatsReceivedListener, OnUserStatsReceived, UserStatsReceived_t, CallbackUserStatsReceived);
 
 private:
-	UserStatsReceivedListener() noexcept : CallbackUserStatsReceived{ this, &UserStatsReceivedListener::OnUserStatsReceived }
+	UserStatsReceivedListener() noexcept : CallbackUserStatsReceived(this, &UserStatsReceivedListener::OnUserStatsReceived)
 	{
 	}
 };
@@ -39,7 +39,7 @@ void UserStatsReceivedListener::OnUserStatsReceived(UserStatsReceived_t *pCallba
 
 AGSteamPlugin& AGSteamPlugin::GetAGSteamPlugin() noexcept
 {
-	static AGSteamPlugin plugin{};
+	static AGSteamPlugin plugin;
 	return plugin;
 }
 

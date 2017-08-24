@@ -5,6 +5,7 @@
 #ifndef AGSteam_SteamStats_H
 #define AGSteam_SteamStats_H
 
+#include "ags2client/Cpp11Fix.h"
 #include "ags2client/IClientStats.h"
 
 namespace AGSteam
@@ -15,11 +16,11 @@ namespace AGSteam
 		class SteamStats : public AGS2Client::IClientStats
 		{
 		protected:
-			SteamStats() noexcept = default;
+			DEFAULT_CTOR(SteamStats);
 
 		public:
+			DEFAULT_DTOR(SteamStats);
 			static SteamStats& GetSteamStats() noexcept;
-			~SteamStats() noexcept = default;
 			int GetIntStat(char const *name) const noexcept override; // retrieves a stat
 			float GetFloatStat(char const *name) const noexcept override;
 			float GetAverageRateStat(char const *name) const noexcept override;

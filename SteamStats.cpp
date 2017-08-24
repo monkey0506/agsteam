@@ -11,7 +11,7 @@ using namespace AGSteam::Plugin;
 
 SteamStats& SteamStats::GetSteamStats() noexcept
 {
-	static SteamStats stats{};
+	static SteamStats stats;
 	return stats;
 }
 
