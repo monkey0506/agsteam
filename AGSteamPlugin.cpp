@@ -4,6 +4,8 @@
 //
 // NOTICE: This file contains references to the Steamworks API. See the included
 // LICENSE file for details and restrictions on using this file.
+#include <string>
+
 #include "ags2client/agsplugin.h"
 #include "AGSteamPlugin.h"
 #include "steam/steam_api.h"
@@ -113,4 +115,13 @@ char const* AGSteamPlugin::GetAGSPluginDesc() const noexcept
 bool AGSteamPlugin::ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexcept
 {
 	return (IsInitialized() && SteamUtils()->IsOverlayEnabled());
+}
+
+extern void SteamLeaderboards_FindLeaderboard(char const *leaderboardName);
+
+void AGSteamPlugin::RegisterScriptFunctions(IAGSEngine *engine) const noexcept
+{
+	static std::string findLeaderboard = std::string(GetClientNameForScript()) + "::FindLeaderboard^1"; // for legacy AGSteam build
+    IAGS2Client::RegisterScriptFunctions(engine);
+    engine->RegisterScriptFunction(findLeaderboard.c_str(), reinterpret_cast<void*>(SteamLeaderboards_FindLeaderboard));
 }
