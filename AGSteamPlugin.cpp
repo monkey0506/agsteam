@@ -10,6 +10,29 @@
 using namespace AGSteam::Plugin;
 
 static bool SteamInitialized = false;
+static bool SteamOverlayActive = false;
+
+struct GameOverlayActivatedListener
+{
+public:
+    static GameOverlayActivatedListener& GetListener() noexcept
+    {
+        static GameOverlayActivatedListener listener;
+        return listener;
+    }
+
+    STEAM_CALLBACK(GameOverlayActivatedListener, OnGameOverlayActivated, GameOverlayActivated_t, CallbackGameOverlayActivated);
+
+private:
+    GameOverlayActivatedListener() noexcept : CallbackGameOverlayActivated(this, &GameOverlayActivatedListener::OnGameOverlayActivated)
+    {
+    }
+};
+
+void GameOverlayActivatedListener::OnGameOverlayActivated(GameOverlayActivated_t *pCallback)
+{
+    SteamOverlayActive = pCallback->m_bActive;
+}
 
 struct UserStatsReceivedListener
 {
@@ -51,8 +74,8 @@ void AGSteamPlugin_Initialize() noexcept
 		{
 			return;
 		}
-		//auto &listener = UserStatsReceivedListener::GetListener();
-		UserStatsReceivedListener::GetListener(); // ensure that listener is created
+        GameOverlayActivatedListener::GetListener(); // ensure that game overlay listener is created
+		UserStatsReceivedListener::GetListener(); // ensure that user stats listener is created
 		SteamUserStats()->RequestCurrentStats();
 	}
 }
@@ -112,5 +135,5 @@ char const* AGSteamPlugin::GetAGSPluginDesc() const noexcept
 
 bool AGSteamPlugin::ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexcept
 {
-	return (IsInitialized() && SteamUtils()->IsOverlayEnabled());
+	return SteamOverlayActive;
 }
