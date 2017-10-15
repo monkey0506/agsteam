@@ -12,9 +12,13 @@ namespace AGSteam
 {
 	namespace Plugin
 	{
+        struct SteamAchievements_Statics;
+
 		class SteamAchievements : public AGS2Client::IClientAchievements
 		{
 		protected:
+            friend SteamAchievements_Statics;
+
 			DEFAULT_CTOR(SteamAchievements);
 
 		public:

@@ -9,11 +9,14 @@
 #include "ags2client/IAGS2Client.h"
 #include "SteamLeaderboards.h"
 #include "steam/steam_api.h"
+#include "ags2client/Cpp11Fix.h"
 using namespace AGSteam::Plugin;
 
 struct LeaderboardListener
 {
 private:
+    friend SteamLeaderboards_Statics;
+
 #ifdef AGS2CLIENT_HAS_CPP11
 	LeaderboardListener() = default;
 #else
@@ -21,11 +24,7 @@ private:
 #endif // AGS2CLIENT_HAS_CPP11
 
 public:
-	static LeaderboardListener& GetLeaderboardListener() noexcept
-	{
-		static LeaderboardListener listener;
-		return listener;
-	}
+    static LeaderboardListener& GetLeaderboardListener() noexcept;
 
 #define LEADERBOARD_LISTENER_CALLRESULT(thisclass, func, param, var) CCallResult<thisclass, param> var; void func(param *pParam, bool bIOFailure)
 	LEADERBOARD_LISTENER_CALLRESULT(LeaderboardListener, OnFindLeaderboard, LeaderboardFindResult_t, CallResultFindLeaderboard);
@@ -33,6 +32,27 @@ public:
 	LEADERBOARD_LISTENER_CALLRESULT(LeaderboardListener, OnDownloadScore, LeaderboardScoresDownloaded_t, CallResultDownloadScore);
 #undef LEADERBOARD_LISTENER_CALLRESULT
 };
+
+namespace AGSteam
+{
+    namespace Plugin
+    {
+        struct SteamLeaderboards_Statics
+        {
+        public:
+            static LeaderboardListener LISTENER;
+            static SteamLeaderboards LEADERBOARDS;
+        };
+    }
+}
+
+LeaderboardListener SteamLeaderboards_Statics::LISTENER;
+SteamLeaderboards SteamLeaderboards_Statics::LEADERBOARDS;
+
+LeaderboardListener& LeaderboardListener::GetLeaderboardListener() noexcept
+{
+    return SteamLeaderboards_Statics::LISTENER;
+}
 
 static struct
 {
@@ -45,8 +65,7 @@ static struct
 
 SteamLeaderboards& SteamLeaderboards::GetSteamLeaderboards() noexcept
 {
-	static SteamLeaderboards leaderboards;
-	return leaderboards;
+    return SteamLeaderboards_Statics::LEADERBOARDS;
 }
 
 void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Client::LeaderboardScore::Type type, int limit) const noexcept
@@ -58,6 +77,11 @@ void SteamLeaderboards::RequestLeaderboard(char const *leaderboardName, AGS2Clie
 	leaderboard.Type = static_cast<ELeaderboardDataRequest>(type);
 	LeaderboardListener &listener = LeaderboardListener::GetLeaderboardListener();
 	listener.CallResultFindLeaderboard.Set(SteamUserStats()->FindLeaderboard(leaderboardName), &listener, &LeaderboardListener::OnFindLeaderboard);
+}
+
+extern "C" void SteamLeaderboards_FindLeaderboard(char const *leaderboardName)
+{
+    SteamLeaderboards::GetSteamLeaderboards().RequestLeaderboard(nullptr, AGS2Client::LeaderboardScore::AroundUser, 10);
 }
 
 void LeaderboardListener::OnUploadScore(LeaderboardScoreUploaded_t *callback, bool IOFailure)

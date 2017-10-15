@@ -12,10 +12,13 @@ namespace AGSteam
 {
 	namespace Plugin
 	{
+        struct SteamStats_Statics;
 
 		class SteamStats : public AGS2Client::IClientStats
 		{
 		protected:
+            friend SteamStats_Statics;
+
 			DEFAULT_CTOR(SteamStats);
 
 		public:
@@ -28,7 +31,6 @@ namespace AGSteam
 			bool SetFloatStat(char const *name, float value) const noexcept override;
 			bool UpdateAverageRateStat(char const *name, float numerator, float denominator) const noexcept override; // updates average rate with new data
 		};
-
 	} // namespace Plugin
 } // namespace AGSteam
 

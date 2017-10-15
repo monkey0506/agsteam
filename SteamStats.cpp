@@ -9,10 +9,23 @@
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
 
+namespace AGSteam
+{
+    namespace Plugin
+    {
+        struct SteamStats_Statics
+        {
+        public:
+            static SteamStats STATS;
+        };
+    }
+}
+
+SteamStats SteamStats_Statics::STATS;
+
 SteamStats& SteamStats::GetSteamStats() noexcept
 {
-	static SteamStats stats;
-	return stats;
+    return SteamStats_Statics::STATS;
 }
 
 int SteamStats::GetIntStat(char const *name) const noexcept

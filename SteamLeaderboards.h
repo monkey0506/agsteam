@@ -12,10 +12,13 @@ namespace AGSteam
 {
 	namespace Plugin
 	{
+        struct SteamLeaderboards_Statics;
 
 		class SteamLeaderboards : public AGS2Client::IClientLeaderboards
 		{
 		private:
+            friend SteamLeaderboards_Statics;
+
 			DEFAULT_CTOR(SteamLeaderboards);
 
 		public:
@@ -28,7 +31,6 @@ namespace AGSteam
 			int GetLeaderScore(int index) const noexcept override;
 			int GetLeaderCount() const noexcept override;
 		};
-
 	} // namespace Plugin
 } // namespace AGSteam
 

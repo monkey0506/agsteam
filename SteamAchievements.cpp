@@ -9,10 +9,23 @@
 #include "steam/steam_api.h"
 using namespace AGSteam::Plugin;
 
+namespace AGSteam
+{
+    namespace Plugin
+    {
+        struct SteamAchievements_Statics
+        {
+        public:
+            static SteamAchievements ACHIEVEMENTS;
+        };
+    }
+}
+
+SteamAchievements SteamAchievements_Statics::ACHIEVEMENTS;
+
 SteamAchievements& SteamAchievements::GetSteamAchievements() noexcept
 {
-	static SteamAchievements achievements;
-	return achievements;
+    return SteamAchievements_Statics::ACHIEVEMENTS;
 }
 
 bool SteamAchievements::ResetAchievement(char const *ID) const noexcept

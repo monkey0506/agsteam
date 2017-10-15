@@ -12,10 +12,13 @@ namespace AGSteam
 {
 	namespace Plugin
 	{
+        struct AGSteamPlugin_Statics;
 
 		class AGSteamPlugin : public AGS2Client::IAGS2Client
 		{
 		protected:
+            friend AGSteamPlugin_Statics;
+
 			DEFAULT_CTOR(AGSteamPlugin);
 
 		public:
@@ -32,8 +35,8 @@ namespace AGSteam
 			char const* GetAGSPluginDesc() const noexcept override;
 			float GetVersion() const noexcept override;
 			bool ClaimKeyPress(int data, int(*IsKeyPressed)(int)) const noexcept override;
+            void RegisterScriptFunctions(IAGSEngine *engine) const noexcept override;
 		};
-
 	} // namespace Plugin
 } // namespace AGSteam
 
