@@ -26,7 +26,7 @@ namespace AGSteam
 			static AGSteamPlugin& GetAGSteamPlugin() noexcept;
 			bool IsInitialized() const noexcept override;
 			void ResetStatsAndAchievements() const noexcept override;
-			char const* GetCurrentGameLanguage() const noexcept;
+			char const* GetCurrentGameLanguage() const noexcept override;
 			char const* GetUserName() const noexcept override;
 			void Startup() const noexcept override;
             void Shutdown() const noexcept override;
