@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\ags2client\AGSFloatFix.h" />
     <ClInclude Include="..\..\ags2client\agsplugin.h" />
     <ClInclude Include="..\..\ags2client\Cpp11Fix.h" />
+    <ClInclude Include="..\..\ags2client\DllExports.h" />
     <ClInclude Include="..\..\ags2client\IAGS2Client.h" />
     <ClInclude Include="..\..\ags2client\IClientAchievements.h" />
     <ClInclude Include="..\..\ags2client\IClientLeaderboards.h" />
