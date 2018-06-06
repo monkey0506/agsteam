@@ -138,7 +138,7 @@ void AGSteamPlugin::Update() const noexcept
 
 float AGSteamPlugin::GetVersion() const noexcept
 {
-	return 3.3f;
+	return 3.4f;
 }
 
 char const* AGSteamPlugin::GetAGSPluginName() const noexcept
