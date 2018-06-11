@@ -120,7 +120,7 @@ LINUX32_LIB_FLAGS=-shared -o $(PATH_LINUX32_BUILD)/libagsteam.so -m32
 LINUX32_LIB_DISJOINT_FLAGS=-shared -o $(PATH_LINUX32_BUILD)/libagsteam-disjoint.so -m32
 
 linux32: linux32-unified linux32-disjoint
-$(eval $(call build_platform,linux32)
+$(eval $(call build_platform,linux32))
 
 clean-linux32:
 	rm -rf $(PATH_LINUX32_OBJ) $(PATH_LINUX32_BUILD)/libagsteam.so $(PATH_LINUX32_BUILD)/libagsteam-disjoint.so
